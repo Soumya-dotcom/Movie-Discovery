@@ -485,3 +485,10 @@ body {
         margin: 0 auto;
     }
 }
+
+/* Makes the initial hidden placeholder option appear muted like the search input hint */
+select:invalid,
+select option[disabled] {
+    color: var(--text-muted);
+    opacity: 0.7;
+}
