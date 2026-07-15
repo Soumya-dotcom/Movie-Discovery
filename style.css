@@ -1,18 +1,21 @@
-/* --- MODERN DARK STRIPPED GLOBAL SETUP --- */
+/* --- BASE VARIANT STYLESHEET REBOOT --- */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 :root {
-    --bg-main: #0c0f12;
-    --bg-card: #161b22;
-    --brand-accent: #38bdf8;
+    --bg-main: #080a0c;
+    --bg-card: #11161d;
+    --bg-input: #1a212a;
+    --brand-gold: #e5b842;      /* Vibrant Premium Gold Theme */
+    --brand-gold-hover: #fcd36a;/* Bright highlight gold */
     --brand-red: #ef4444;
     --text-light: #f3f4f6;
-    --text-muted: #9ca3af;
+    --text-muted: #8e9aa8;
+    --nav-height: 72px;
 }
 
 body {
@@ -21,17 +24,25 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    -webkit-font-smoothing: antialiased;
 }
 
 /* --- THEME NAVIGATION NAVBAR --- */
 .navbar {
-    background-color: var(--bg-card);
-    padding: 18px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background-color: rgba(17, 22, 29, 0.95);
+    backdrop-filter: blur(12px);
+    height: var(--nav-height);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid rgba(229, 184, 66, 0.15);
+    display: flex;
+    align-items: center;
 }
 
 .nav-container {
     max-width: 1240px;
+    width: 100%;
     margin: 0 auto;
     display: flex;
     justify-content: space-between;
@@ -39,18 +50,23 @@ body {
     padding: 0 20px;
 }
 
+/* Logo updated to Premium Brand Gold */
 .logo {
-    color: var(--brand-accent);
-    font-size: 1.6rem;
-    font-weight: 700;
+    color: var(--brand-gold);
+    font-size: 1.7rem;
+    font-weight: 800;
     text-decoration: none;
     letter-spacing: -0.5px;
+    transition: color 0.3s ease;
+}
+.logo:hover {
+    color: var(--brand-gold-hover);
 }
 
 .nav-links {
     display: flex;
     list-style: none;
-    gap: 25px;
+    gap: 30px;
 }
 
 .nav-links a {
@@ -58,66 +74,146 @@ body {
     text-decoration: none;
     font-weight: 600;
     font-size: 1rem;
-    transition: color 0.2s ease;
+    padding: 8px 0;
+    position: relative;
+    transition: color 0.3s ease;
 }
 
-.nav-links a:hover, .nav-links a.active {
-    color: var(--brand-accent);
+/* Premium Gold Hover Underline sliding animation effect */
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--brand-gold);
+    transition: width 0.3s ease;
 }
 
-/* --- MAIN FLUID CONTENT CONTAINER --- */
-.container {
-    max-width: 1240px;
-    width: 100%;
-    margin: 40px auto;
-    padding: 0 20px;
-    flex: 1;
-}
-
-.page-header {
-    margin-bottom: 35px;
-}
-
-.page-header h2 {
-    font-size: 2.2rem;
+.nav-links a:hover {
     color: var(--text-light);
-    margin-bottom: 6px;
+}
+
+.nav-links a:hover::after, 
+.nav-links a.active::after {
+    width: 100%;
+}
+
+.nav-links a.active {
+    color: var(--brand-gold);
+}
+
+/* --- DYNAMIC HEADER ZONE --- */
+.page-header {
+    text-align: center;      /* Centers the Header */
+    margin: 40px auto 35px auto;
+    max-width: 700px;
+}
+
+/* Header Text elements transformed to center gold themes */
+.page-header h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--brand-gold);
+    margin-bottom: 10px;
+    letter-spacing: -0.5px;
 }
 
 .page-header p {
     color: var(--text-muted);
+    font-size: 1.05rem;
+    line-height: 1.5;
 }
 
-/* --- FILTER AND CONTROLS LAYOUT HUGS --- */
-.controls-hub {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 30px;
-}
-
-.controls-hub input, .controls-hub select {
-    background: var(--bg-card);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    padding: 12px 16px;
-    border-radius: 6px;
-    color: var(--text-light);
-    font-size: 1rem;
-    outline: none;
-}
-
-.controls-hub input {
+/* --- FLUID CONTENT MATRIX ARCHITECTURE --- */
+.container {
+    max-width: 1240px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 20px;
     flex: 1;
 }
 
-.controls-hub input:focus, .controls-hub select:focus {
-    border-color: var(--brand-accent);
+/* --- ATTRACTIVE CONTROLS & DROPDOWN ENGINE --- */
+.controls-hub {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 35px;
+    background: rgba(17, 22, 29, 0.6);
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* --- MOVIE DISPLAY GRIDS --- */
+.search-wrapper {
+    flex: 2;
+}
+
+.controls-hub input {
+    width: 100%;
+    background: var(--bg-input);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 14px 18px;
+    border-radius: 8px;
+    color: var(--text-light);
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.controls-hub input:focus {
+    border-color: var(--brand-gold);
+    box-shadow: 0 0 0 3px rgba(229, 184, 66, 0.15);
+}
+
+/* Custom Dropdown Arrow Container Framework */
+.select-wrapper {
+    flex: 1;
+    position: relative;
+}
+
+.select-wrapper::after {
+    content: '▼';
+    font-size: 0.75rem;
+    color: var(--brand-gold);
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    transition: color 0.3s ease;
+}
+
+.controls-hub select {
+    width: 100%;
+    background: var(--bg-input);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 14px 40px 14px 18px;
+    border-radius: 8px;
+    color: var(--text-light);
+    font-size: 0.95rem;
+    outline: none;
+    cursor: pointer;
+    appearance: none; /* Strip away default operating system grey arrows */
+    -webkit-appearance: none;
+    transition: all 0.3s ease;
+}
+
+.select-wrapper:hover::after {
+    color: var(--brand-gold-hover);
+}
+
+.controls-hub select:focus {
+    border-color: var(--brand-gold);
+    box-shadow: 0 0 0 3px rgba(229, 184, 66, 0.15);
+}
+
+/* --- MOVIE GRID DISPLAY SYSTEMS --- */
 .movie-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 15px;
+    gap: 16px;
 }
 
 .movie-card {
@@ -126,20 +222,20 @@ body {
     overflow: hidden;
     text-decoration: none;
     color: inherit;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    border: 1px solid rgba(255, 255, 255, 0.04);
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.03);
     display: flex;
     flex-direction: column;
 }
 
 .movie-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 24px rgba(0,0,0,0.6);
+    transform: translateY(-6px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.7), 0 0 0 1px rgba(229, 184, 66, 0.2);
 }
 
 .poster {
     width: 100%;
-    height: 190px;
+    height: 195px;
     object-fit: cover;
     background-color: #0b0c10;
 }
@@ -150,7 +246,8 @@ body {
 }
 
 .card-info h3 {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    font-weight: 600;
     margin-bottom: 4px;
     white-space: nowrap;
     overflow: hidden;
@@ -158,21 +255,21 @@ body {
 }
 
 .card-info p {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: var(--text-muted);
-    margin-bottom: 4px;
 }
 
 .stars {
-    color: #eab308 !important;
-    font-weight: 600;
+    color: var(--brand-gold) !important;
+    font-weight: 700;
+    margin-top: 2px;
 }
 
-/* --- DETAILS PAGE GRID SYSTEM --- */
+/* --- DETAILS MATRIX LAYOUT PORTALS --- */
 .details-container {
     max-width: 1240px;
     width: 100%;
-    margin: 40px auto;
+    margin: 30px auto;
     padding: 0 20px;
     flex: 1;
 }
@@ -182,73 +279,78 @@ body {
     grid-template-columns: 1fr 2fr;
     gap: 40px;
     background: var(--bg-card);
-    padding: 35px;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.04);
+    padding: 40px;
+    border-radius: 16px;
+    border: 1px solid rgba(229, 184, 66, 0.1);
 }
 
 .large-poster {
     width: 100%;
-    border-radius: 8px;
+    border-radius: 10px;
     object-fit: cover;
-    box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
 }
 
 .details-info-zone h1 {
-    font-size: 2.6rem;
+    font-size: 2.8rem;
+    font-weight: 800;
     margin-bottom: 12px;
+    letter-spacing: -0.5px;
 }
 
 .meta-tags {
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 }
 
 .tag {
     display: inline-block;
-    padding: 6px 14px;
+    padding: 6px 16px;
     border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
+    font-size: 0.8rem;
+    font-weight: 700;
     margin-right: 10px;
-    background: rgba(255,255,255,0.06);
-    color: var(--brand-accent);
+    background: rgba(229, 184, 66, 0.1);
+    color: var(--brand-gold);
+    border: 1px solid rgba(229, 184, 66, 0.15);
 }
 
 .rating-display {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     margin-bottom: 25px;
-    color: #eab308;
+    color: var(--brand-gold);
 }
 
 .overview-text {
-    line-height: 1.7;
-    color: var(--text-muted);
-    margin-bottom: 30px;
+    line-height: 1.72;
+    color: #cbd5e1;
+    margin-bottom: 35px;
     font-size: 1.05rem;
 }
 
-/* --- THEME BUTTON PATTERNS --- */
+/* --- THEME CUSTOM BUTTON DESIGNS --- */
 .btn {
     display: inline-block;
-    padding: 12px 28px;
-    font-size: 1rem;
-    font-weight: 600;
-    border-radius: 6px;
+    padding: 14px 32px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    border-radius: 8px;
     border: none;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s standard;
     text-align: center;
     text-decoration: none;
 }
 
+/* Buttons changed to match golden accent default settings */
 .btn-primary {
-    background: var(--brand-accent);
-    color: #0c0f12;
+    background: var(--brand-gold);
+    color: #080a0c;
 }
 
 .btn-primary:hover {
-    background: #0ea5e9;
+    background: var(--brand-gold-hover);
     transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(229, 184, 66, 0.25);
 }
 
 .btn-danger {
@@ -260,83 +362,126 @@ body {
 .btn-danger:hover {
     background: var(--brand-red);
     color: var(--text-light);
+    transform: translateY(-2px);
 }
 
-/* --- SPINNER ANIMATION ENGINE --- */
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
 
-/* --- UNIFIED ENTERPRISE FOOTER SYSTEM --- */
+/* --- ATTRACTIVE PRODUCTION-TIER FOOTER --- */
 .footer {
-    background-color: var(--bg-card);
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 40px 0 20px 0;
-    margin-top: 60px;
+    background-color: #0b0f14;
+    border-top: 1px solid rgba(229, 184, 66, 0.15);
+    padding: 60px 0 30px 0;
+    margin-top: 80px;
 }
 
 .footer-container {
     max-width: 1240px;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
     gap: 40px;
     padding: 0 20px;
 }
 
 .footer-brand h3 {
-    color: var(--brand-accent);
-    margin-bottom: 12px;
-    font-size: 1.4rem;
+    color: var(--brand-gold);
+    margin-bottom: 16px;
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
 }
 
 .footer-brand p {
     color: var(--text-muted);
-    line-height: 1.5;
-    max-width: 400px;
+    line-height: 1.6;
+    max-width: 360px;
+    font-size: 0.95rem;
 }
 
 .footer-links {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
 }
 
 .footer-links h4 {
     color: var(--text-light);
-    margin-bottom: 5px;
-    font-size: 1.1rem;
+    margin-bottom: 6px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .footer-links a {
     color: var(--text-muted);
     text-decoration: none;
-    transition: color 0.2s;
+    transition: color 0.2s ease;
     font-size: 0.95rem;
+    width: fit-content;
 }
 
 .footer-links a:hover {
-    color: var(--brand-accent);
+    color: var(--brand-gold);
+    padding-left: 2px;
 }
 
 .footer-bottom {
     max-width: 1240px;
-    margin: 30px auto 0 auto;
-    padding: 20px 20px 0 20px;
+    margin: 50px auto 0 auto;
+    padding: 25px 20px 0 20px;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
-    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     color: var(--text-muted);
-    font-size: 0.9rem;
+    font-size: 0.88rem;
 }
 
-/* RESPONSIVE LAYOUT BREAKPOINTS */
-@media (max-width: 768px) {
-    .details-grid, .footer-container {
+.footer-socials {
+    display: flex;
+    gap: 20px;
+}
+
+.footer-socials a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.footer-socials a:hover {
+    color: var(--brand-gold);
+}
+
+/* RESPONSIVE LAYOUT CONSTRAINTS */
+@media (max-width: 900px) {
+    .footer-container {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .details-grid, .footer-container, .footer-bottom {
         grid-template-columns: 1fr;
+        flex-direction: column;
         gap: 30px;
+        text-align: center;
+    }
+    .footer-bottom {
+        align-items: center;
+    }
+    .footer-socials {
+        justify-content: center;
     }
     .controls-hub {
         flex-direction: column;
+    }
+    .footer-links a {
+        margin: 0 auto;
     }
 }
