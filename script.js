@@ -94,8 +94,8 @@ function showMovies(movieArray) {
         return;
     }
 
-    for (var i = 0; i < movieArray.length; i++) {
-        var movie = movieArray[i];
+    // Using .forEach explicitly binds the 'movie' object context to each card correctly
+    movieArray.forEach(function(movie) {
         var starText = "\u2605".repeat(Math.round(movie.rating / 2));
         var safePayload = encodeURIComponent(JSON.stringify(movie));
 
@@ -109,7 +109,7 @@ function showMovies(movieArray) {
                 </div>
             </a>
         `;
-    }
+    });
 }
 
 function saveActiveMovie(movieDataJson) {
