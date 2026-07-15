@@ -353,5 +353,25 @@ function removeFromWatchlistByIndex(index) {
     renderWatchlist();
 }
 
-// Fires off our initial endpoint lookup as soon as the browser sets up the landing script runtime environment
-loadMovieCatalog(currentPage);
+// --- SECURE INITIALIZATION RUNNER ENGINE ---
+// This replaces the direct "loadMovieCatalog(currentPage);" call at the bottom
+function startApplication() {
+    var currentPath = window.location.pathname.toLowerCase();
+
+    if (currentPath.includes("movie-details.html")) {
+        // Details page setup: skip fetching a new list, just render the single movie profile
+        renderMovieDetails();
+    } else if (currentPath.includes("watchlist.html")) {
+        // Watchlist page setup: skip API fetch, read saved local items immediately
+        renderWatchlist();
+    } else if (currentPath.includes("trending.html")) {
+        // Trending page setup: fetch the core dataset to parse top ratings
+        loadMovieCatalog(1, false);
+    } else {
+        // Home page dashboard (index.html): fetch catalog data fresh from server
+        loadMovieCatalog(1, false);
+    }
+}
+
+// Fire off the initialization check as soon as the script finishes loading in the browser context
+startApplication();
