@@ -2,7 +2,7 @@
 var movies = []; 
 
 // TODO: Paste your secure v3 text key right inside the empty string quotes below
-const API_KEY = "YOUR_ACTUAL_TMDB_API_KEY_HERE"; 
+const API_KEY = "fffa8cf32c1c5bb9cdfc864a1c48a7f7"; 
 const API_URL = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&sort_by=popularity.desc&vote_count.gte=150&page=1`;
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
@@ -56,13 +56,24 @@ async function loadMovieCatalog() {
 }
 
 function initializeRouting() {
-    var currentPath = window.location.pathname.split("/").pop();
+    // Standardizes the path check to prevent absolute URI errors
+    var currentPath = window.location.pathname.toLowerCase();
 
-    if (currentPath === "trending.html") {
+    if (currentPath.includes("trending.html")) {
         var trendingMovies = movies.filter(function(m) { return m.rating >= 7.5; });
         trendingMovies.sort(function(a, b) { return b.rating - a.rating; });
         showMovies(trendingMovies);
+    } else if (currentPath.includes("movie-details.html")) {
+        // Safe check if render function exists
+        if (typeof renderMovieDetails === 'function') {
+            renderMovieDetails();
+        }
+    } else if (currentPath.includes("watchlist.html")) {
+        if (typeof renderWatchlist === 'function') {
+            renderWatchlist();
+        }
     } else {
+        // Default fall-through back to index homepage layout channel
         showMovies(movies);
     }
 }
