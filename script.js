@@ -159,7 +159,7 @@ function saveActiveMovieByIndex(index) {
     }
 }
 
-
+// --- DYNAMIC SEARCH & MULTI-FILTER LOGIC MATRIX ---
 var searchBox = document.getElementById("searchBox");
 var genreSelect = document.getElementById("genreSelect");
 var languageSelect = document.getElementById("languageSelect"); 
@@ -167,7 +167,7 @@ var languageSelect = document.getElementById("languageSelect");
 if (searchBox) searchBox.addEventListener("input", filterMovies);
 if (genreSelect) genreSelect.addEventListener("change", filterMovies);
 
-
+// When the user picks a new language channel, reset to page 1 and fetch fresh language files
 if (languageSelect) {
     languageSelect.addEventListener("change", function() {
         currentPage = 1; 
@@ -176,13 +176,16 @@ if (languageSelect) {
 }
 
 function filterMovies() {
+    // Read current state configurations from inputs safely
     var searchText = (searchBox ? searchBox.value.toLowerCase().trim() : "");
     var selectedGenre = (genreSelect ? genreSelect.value : "All");
     var results = [];
 
+    // Filter through our cached multi-page data block
     for (var i = 0; i < movies.length; i++) {
         var movie = movies[i];
         
+        // Strict parameter checks
         var titleMatches = movie.title.toLowerCase().includes(searchText);
         var genreMatches = (selectedGenre === "All" || movie.genre.includes(selectedGenre));
 
@@ -190,8 +193,11 @@ function filterMovies() {
             results.push(movie);
         }
     }
+    
+    // Repaint the high-density grid array dynamically
     showMovies(results);
 }
+
 
 // Reads the clicked movie profile data out of memory cache and generates the entire custom layout layout view on the details page
 function renderMovieDetails() {
