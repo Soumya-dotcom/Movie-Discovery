@@ -57,6 +57,7 @@ body {
     padding: 0 30px;
 }
 
+/* Logo updated to Premium Brand Gold with Left Alignment */
 .logo {
     color: var(--brand-gold);
     font-size: 1.8rem;
@@ -65,6 +66,7 @@ body {
     letter-spacing: -0.5px;
     text-shadow: 0 0 10px rgba(229, 184, 66, 0.3), 0 0 20px rgba(229, 184, 66, 0.1);
     transition: all 0.3s ease;
+    /* CHANGED: Removed "margin: 0 auto" so it aligns cleanly to the left edge of your wide container */
 }
 
 .logo:hover {
