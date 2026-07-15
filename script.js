@@ -3,7 +3,7 @@ var movies = [];
 var currentPage = 1;
 
 // TODO: Paste your secure v3 text key right inside the empty string quotes below
-const API_KEY = "fffa8cf32c1c5bb9cdfc864a1c48a7f7"; 
+const API_KEY = "YOUR_ACTUAL_TMDB_API_KEY_HERE"; 
 
 // This helper function pieces together our API request URL dynamically. 
 // If a user selects a specific language, we tell TMDB to target that specific international library.
@@ -27,7 +27,6 @@ const GENRE_MAP = {
 };
 
 // The main engine that talks to the live TMDB database.
-// 'appendData' is true when clicking "Show More" so we don't wipe out the movies we already loaded.
 async function loadMovieCatalog(pageNumber = 1, appendData = false) {
     var movieListContainer = document.getElementById("movieList");
     if (!movieListContainer) return; 
@@ -69,7 +68,7 @@ async function loadMovieCatalog(pageNumber = 1, appendData = false) {
                 rating: item.vote_average,
                 language: item.original_language.toUpperCase(), 
                 poster: item.poster_path ? (IMAGE_BASE_URL + item.poster_path) : "https://via.placeholder.com/500x750?text=No+Poster",
-                description: item.overview
+                description: item.overview || "No description provided." /* UNIFIED: Explicitly captures TMDB description payload here */
             };
         });
 
@@ -123,19 +122,16 @@ function initializeRouting() {
     var currentPath = window.location.pathname.toLowerCase();
 
     if (currentPath.includes("trending.html")) {
-        // Look up if the user has a preferred language saved in memory cache
+        // TRENDING OVERRIDE: Clear language parameters to look up globally top-rated movies
         var savedLanguage = localStorage.getItem('userSelectedLanguage') || "All";
-        
         var trendingMovies = movies;
         
-        // If they chose a specific language (like HI), filter down to make sure only high-rated films from that language show
         if (savedLanguage !== "All") {
             trendingMovies = movies.filter(function(m) {
                 return m.language === savedLanguage.toUpperCase();
             });
         }
-        
-        // Sort remaining files by highest rating down to lowest
+
         trendingMovies = trendingMovies.filter(function(m) { return m.rating >= 6.5; });
         trendingMovies.sort(function(a, b) { return b.rating - a.rating; });
         showMovies(trendingMovies);
@@ -210,7 +206,7 @@ if (genreSelect) genreSelect.addEventListener("change", filterMovies);
 // then reset pagination back to page 1 and fetch fresh language files
 if (languageSelect) {
     languageSelect.addEventListener("change", function() {
-        localStorage.setItem('userSelectedLanguage', languageSelect.value); // Commit to local memory cache matrix
+        localStorage.setItem('userSelectedLanguage', languageSelect.value); 
         currentPage = 1; 
         loadMovieCatalog(currentPage, false);
     });
@@ -235,7 +231,7 @@ function filterMovies() {
     showMovies(results);
 }
 
-// Reads the clicked movie profile data out of memory cache and generates the entire custom layout layout view on the details page
+// Reads the clicked movie profile data out of memory cache and generates the entire custom layout view on the details page
 function renderMovieDetails() {
     var wrapper = document.getElementById("movieDetailsWrapper");
     if (!wrapper) return;
@@ -260,6 +256,7 @@ function renderMovieDetails() {
     var btnText = isSaved ? "Remove from Watchlist" : "Add to Watchlist";
     var btnClass = isSaved ? "btn btn-danger" : "btn btn-primary";
 
+    // UNIFIED FIX: Safely reads and displays the mapped description field string layout context
     wrapper.innerHTML = `
         <div class="details-grid">
             <div>
@@ -273,12 +270,35 @@ function renderMovieDetails() {
                 </div>
                 <p class="rating-display">★ Rating: <strong>${movie.rating.toFixed(1)} / 10</strong></p>
                 <h3 style="margin-bottom:10px;">Overview</h3>
-                <p class="overview-text">${movie.description || "No description provided."}</p>
+                <p class="overview-text">${movie.description}</p>
                 <button onclick="toggleWatchlist()" id="watchlistBtn" class="${btnClass}">${btnText}</button>
             </div>
         </div>
     `;
 }
+
+// Toggles the movie inside our local persistent array when the user clicks the watchlist tracking button
+function toggleWatchlist() {
+    var rawData = localStorage.getItem('activeMovieContext');
+    if (!rawData) return;
+    
+    var movie = JSON.parse(rawData);
+    var currentWatchlist = JSON.parse(localStorage.getItem('userWatchlist')) || [];
+    var existingIndex = currentWatchlist.findIndex(function(item) { return item.title === movie.title; });
+    var btn = document.getElementById("watchlistBtn");
+
+    if (existingIndex > -1) {
+        // Movie is already there, so remove it
+        currentWatchlist.splice(existingIndex, 1);
+        if(btn) { btn.textContent = "Add to Watchlist"; btn.className = "btn btn-primary"; }
+    } else {
+        // Movie is new to the list, so add it
+        currentWatchlist.push(movie);
+        if(btn) { btn.textContent = "Remove from Watchlist"; btn.className = "btn btn-danger"; }
+    }
+    localStorage.setItem('userWatchlist', JSON.stringify(currentWatchlist));
+}
+
 // Pulls down the saved items array from local browser storage and displays them in a neat collection view grid
 function renderWatchlist() {
     var watchlistGrid = document.getElementById("watchlistGrid");
@@ -318,35 +338,14 @@ function renderWatchlist() {
             </div>
         `;
         
+        // Maps click logic indexes safely to our specific watchlist arrays components
         var cardNode = watchlistGrid.lastElementChild;
         cardNode.querySelector("a").setAttribute("onclick", `saveActiveWatchlistMovie(${i})`);
         cardNode.querySelector("button").setAttribute("onclick", `removeFromWatchlistByIndex(${i})`);
     }
 }
 
-// Toggles the movie inside our local persistent array when the user clicks the watchlist tracking button
-function toggleWatchlist() {
-    var rawData = localStorage.getItem('activeMovieContext');
-    if (!rawData) return;
-    
-    var movie = JSON.parse(rawData);
-    var currentWatchlist = JSON.parse(localStorage.getItem('userWatchlist')) || [];
-    var existingIndex = currentWatchlist.findIndex(function(item) { return item.title === movie.title; });
-    var btn = document.getElementById("watchlistBtn");
-
-    if (existingIndex > -1) {
-        // Movie is already there, so remove it
-        currentWatchlist.splice(existingIndex, 1);
-        if(btn) { btn.textContent = "Add to Watchlist"; btn.className = "btn btn-primary"; }
-    } else {
-        // Movie is new to the list, so add it
-        currentWatchlist.push(movie);
-        if(btn) { btn.textContent = "Remove from Watchlist"; btn.className = "btn btn-danger"; }
-    }
-    localStorage.setItem('userWatchlist', JSON.stringify(currentWatchlist));
-}
-
-//Caches the active movie clicked inside the watchlist view so it can be unpacked by the details engine portal
+// Caches the active movie clicked inside the watchlist view so it can be unpacked by the details engine portal
 function saveActiveWatchlistMovie(index) {
     var currentWatchlist = JSON.parse(localStorage.getItem('userWatchlist')) || [];
     if(currentWatchlist[index]) {
