@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Profile Details - MovieDiscover</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .details-layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 40px;
+            background-color: var(--bg-surface);
+            padding: 40px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+        .details-poster {
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        .meta-info-badge {
+            display: inline-block;
+            background: var(--bg-surface-accent);
+            padding: 6px 12px;
+            border-radius: 4px;
+            margin-right: 10px;
+            font-size: 0.9rem;
+        }
+        .back-btn-action {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: var(--brand-accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        @media (max-width: 768px) {
+            .details-layout {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+            .details-poster {
+                max-width: 280px;
+                margin: 0 auto;
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="layout-container header-inner">
+            <a href="index.html" class="brand-logo">
+                <span class="logo-icon">🎬</span>Movie<span class="logo-accent">Discover</span>
+            </a>
+            <nav class="site-nav">
+                <ul class="nav-links-list">
+                    <li><a href="index.html" class="nav-item">Home</a></li>
+                    <li><a href="trending.html" class="nav-item">Trending</a></li>
+                    <li><a href="watchlist.html" class="nav-item">Watchlist</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content-wrapper">
+        <div class="layout-container">
+            <a href="index.html" class="back-btn-action"> << Return to Discovery Dashboard</a>
+            
+            <div id="details-target-mount"></div>
+        </div> 
+    </main>
+
+    <footer class="site-footer">
+        <div class="layout-container footer-bottom-inner" style="padding: 20px 24px; color: #777788; font-size: 0.8rem;">
+            <p>&copy; All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Copy this block over the top section dataset inside movie-details.html
+var targetDataset = [
+    { title: "12th fail", year: 2023, genre: ["Biography", "Drama"], rating: 8.9, language: "Hindi", poster: "images/12th fail.jpg" },
+    { title: "Deadpool & Wolverine", year: 2024, genre: ["Sci-Fi", "Action", "Comedy"], rating: 7.7, language: "English", poster: "images/deadpool.jpg" },
+    { title: "Dhurandhar", year: 2025, genre: ["Action"], rating: 7.9, language: "Hindi", poster: "images/dhurandhar.jpg" },
+    { title: "Dune: Part two", year: 2024, genre: ["Sci-Fi", "Drama"], rating: 8.6, language: "English", poster: "images/dune.jpg" },
+    { title: "Kantara", year: 2025, genre: ["Mythological", "Action"], rating: 8.5, language: "Hindi", poster: "images/kantara.jpg" },
+    { title: "RRR", year: 2022, genre: ["Action", "Drama"], rating: 7.8, language: "Hindi", poster: "images/rrr.jpg" },
+    { title: "Spiderman : No way Home", year: 2021, genre: ["Sci-Fi", "Action"], rating: 8.2, language: "English", poster: "images/spiderman.jpg" },
+    { title: "Stree 2", year: 2024, genre: ["Horror", "Comedy"], rating: 8.0, language: "Hindi", poster: "images/stree 2.jpg" },
+    { title: "The Super Mario galaxy Movie", year: 2026, genre: ["Animation"], rating: 8.1, language: "English", poster: "images/super mario.jpg" },
+    { title: "Zootopia 2", year: 2025, genre: ["Animation", "Comedy"], rating: 8.0, language: "English", poster: "images/zootopia 2.jpg" },
+    
+    // Synced database expansions
+    { title: "Interstellar", year: 2014, genre: ["Sci-Fi", "Drama"], rating: 8.7, language: "English", poster: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=500" },
+    { title: "The Dark Knight", year: 2008, genre: ["Action", "Drama"], rating: 9.0, language: "English", poster: "https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?w=500" },
+    { title: "Avatar: The Way of Water", year: 2022, genre: ["Sci-Fi", "Action"], rating: 7.6, language: "English", poster: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=500" },
+    { title: "Inception", year: 2010, genre: ["Sci-Fi", "Action"], rating: 8.8, language: "English", poster: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=500" },
+    { title: "Demon Slayer: Infinity Castle", year: 2025, genre: ["Animation", "Action"], rating: 8.9, language: "Japanese", poster: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=500" }
+];
+        var URLParams = new URLSearchParams(window.location.search);
+        var requestedTitle = URLParams.get('title');
+
+        var matchedMovie = targetDataset.find(function(m) {
+            return m.title === requestedTitle;
+        });
+
+        var targetContainer = document.getElementById("details-target-mount");
+
+        if (matchedMovie) {
+            var currentWatchlist = JSON.parse(localStorage.getItem('watchlist')) || [];
+            var isAlreadySaved = currentWatchlist.some(function(m) { return m.title === matchedMovie.title; });
+            var buttonText = isAlreadySaved ? "Remove from Watchlist" : "Add to Watchlist";
+            var buttonBg = isAlreadySaved ? "#ff3b3b" : "var(--brand-accent)";
+            var buttonColor = isAlreadySaved ? "#fff" : "#13131a";
+
+            targetContainer.innerHTML = `
+                <div class="details-layout">
+                    <div>
+                        <img class="details-poster" src="${matchedMovie.poster}" alt="${matchedMovie.title}">
+                    </div>
+                    <div>
+                        <h1 style="margin-top:0; font-size:3rem; color:#fff;">${matchedMovie.title}</h1>
+                        <div style="margin-bottom: 25px;">
+                            <span class="meta-info-badge">Year: ${matchedMovie.year}</span>
+                            <span class="meta-info-badge">Language: ${matchedMovie.language}</span>
+                            <span class="meta-info-badge">Score Rating: ${matchedMovie.rating}/10</span>
+                        </div>
+                        
+                        <button id="watchlist-toggle-btn" class="btn-watchlist" style="
+                            padding: 12px 24px; font-size: 1rem; font-weight: 600; border: none; border-radius: 6px;
+                            background-color: ${buttonBg}; color: ${buttonColor}; cursor: pointer; margin-bottom: 30px;
+                            transition: transform 0.1s ease;
+                        ">${buttonText}</button>
+
+                        <h3>Primary Classification Genre</h3>
+                        <p>${matchedMovie.genre.join(', ')}</p>
+                        <h3 style="margin-top:30px;">Synopsis Description Overview</h3>
+                        <p style="line-height:1.6; color:#ccc;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Content dynamically compiled matching standard production criteria assets.</p>
+                    </div>
+                </div>
+            `;
+
+            var watchlistBtn = document.getElementById('watchlist-toggle-btn');
+            watchlistBtn.addEventListener('click', function() {
+                toggleWatchlist(matchedMovie);
+            });
+        } else {
+            // HEURISTIC #9: Graceful Error State
+            targetContainer.innerHTML = `
+                <div style="text-align:center; padding: 60px 0;">
+                    <h2>Movie Profile Metadata Not Found</h2>
+                    <p>The profile requested could not be resolved accurately.</p>
+                    <a href="index.html" style="color:var(--brand-accent);">Return to Homepage Dashboard</a>
+                </div>
+            `;
+        }
+
+        function toggleWatchlist(movie) {
+            var currentWatchlist = JSON.parse(localStorage.getItem('watchlist')) || [];
+            var existingIndex = currentWatchlist.findIndex(function(m) { return m.title === movie.title; });
+            var watchlistBtn = document.getElementById('watchlist-toggle-btn');
+
+            if (existingIndex > -1) {
+                currentWatchlist.splice(existingIndex, 1);
+                watchlistBtn.innerText = "Add to Watchlist";
+                watchlistBtn.style.backgroundColor = "var(--brand-accent)";
+                watchlistBtn.style.color = "#13131a";
+            } else {
+                currentWatchlist.push(movie);
+                watchlistBtn.innerText = "Remove from Watchlist";
+                watchlistBtn.style.backgroundColor = "#ff3b3b";
+                watchlistBtn.style.color = "#fff";
+            }
+            localStorage.setItem('watchlist', JSON.stringify(currentWatchlist));
+        }
+    </script>
+</body>
+</html>

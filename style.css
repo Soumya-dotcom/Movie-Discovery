@@ -1,0 +1,296 @@
+/* --- Global Variables & Theme Palette --- */
+:root {
+    --bg-main: #13131a;
+    --bg-surface: #1e1e2f;
+    --bg-surface-accent: #2b2b40;
+    --brand-accent: #ffd43b;
+    --brand-red: #ff3b3b;
+    --text-primary: #eaeaea;
+    --text-muted: #bbbbbb;
+    --site-max-width: 1240px; /* Crucial container fix for layout spacing across wide displays */
+}
+
+body {
+    font-family: 'Poppins', Arial, sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* --- Reusable Central Layout Container --- */
+.layout-container {
+    width: 100%;
+    max-width: var(--site-max-width);
+    margin: 0 auto;
+    padding: 0 24px;
+    box-sizing: border-box;
+}
+
+.main-content-wrapper {
+    flex: 1; /* Automatically pushes footer to absolute bottom screen edge if content is short */
+    padding: 40px 0;
+}
+
+/* --- Interactive Navigation Header System --- */
+.site-header {
+    background-color: var(--bg-surface);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 80px;
+    gap: 20px;
+}
+
+.brand-logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-decoration: none;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.brand-logo .logo-accent {
+    color: var(--brand-red);
+}
+
+.nav-links-list {
+    display: flex;
+    list-style: none;
+    gap: 24px;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-item {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: color 0.2s ease;
+}
+
+.nav-item:hover, .nav-item.active {
+    color: var(--text-primary);
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+}
+
+#searchBox, #genreSelect {
+    padding: 10px 14px;
+    font-size: 14px;
+    margin-left: 10px;
+    border: none;
+    border-radius: 6px;
+    background-color: var(--bg-surface-accent);
+    color: var(--text-primary);
+    outline: none;
+}
+
+/* --- Hero Showcase Billboard --- */
+.hero-billboard {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.eyebrow {
+    color: var(--brand-accent);
+    font-size: 13px;
+    letter-spacing: 3px;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.hero-title {
+    font-size: 42px;
+    margin: 0;
+    text-shadow: 0 0 20px rgba(255, 212, 59, 0.2);
+}
+
+.subtitle {
+    color: var(--text-muted);
+    margin-top: 8px;
+}
+
+/* --- Dynamic CSS Grid Matrix Layout --- */
+.movie-grid-layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 25px;
+    width: 100%;
+}
+
+/* --- HEURISTIC #2 Accessible Hyperlink Cards --- */
+.movie-card {
+    background-color: var(--bg-surface-accent);
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s cubic-bezier(0.2, 0, 0.2, 1), box-shadow 0.2s;
+    overflow: hidden;
+}
+
+.movie-card:hover {
+    transform: scale(1.04);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+}
+
+.movie-card:focus-visible {
+    outline: 3px solid var(--brand-accent);
+    outline-offset: 2px;
+}
+
+.poster {
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    display: block;
+}
+
+.card-info {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.movie-card h3 {
+    margin: 0 0 8px 0;
+    font-size: 17px;
+    line-height: 1.3;
+}
+
+.movie-card p {
+    font-size: 13px;
+    margin: 4px 0;
+    color: var(--text-muted);
+}
+
+.stars {
+    color: gold;
+    font-size: 14px;
+    margin-top: auto !important;
+}
+
+/* --- Interactive Button Micro-Interactions --- */
+.btn-watchlist:active {
+    transform: scale(0.96);
+}
+
+/* --- Enterprise Multi-column Footer Architecture --- */
+.site-footer {
+    background-color: #171725;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding-top: 50px;
+    margin-top: auto;
+}
+
+.footer-inner {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 40px;
+    padding-bottom: 40px;
+}
+
+.footer-brand-column .footer-tagline {
+    color: #9999aa;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-top: 15px;
+    max-width: 320px;
+}
+
+.footer-links-column h4 {
+    color: #ffffff;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 20px 0;
+    font-weight: 600;
+}
+
+.footer-links-column ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.footer-links-column a {
+    color: #9999aa;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s ease, transform 0.2s ease;
+    display: inline-block;
+}
+
+.footer-links-column a:hover {
+    color: var(--brand-accent);
+    transform: translateX(3px);
+}
+
+.footer-bottom-bar {
+    background-color: #0f0f1a;
+    padding: 20px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.03);
+    font-size: 0.8rem;
+    color: #777788;
+}
+
+.footer-bottom-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* Responsive Structural Breakpoints */
+@media (max-width: 900px) {
+    .header-inner {
+        flex-direction: column;
+        height: auto;
+        padding: 15px 24px;
+        gap: 10px;
+    }
+    .header-controls {
+        width: 100%;
+        justify-content: space-between;
+    }
+    #searchBox { margin-left: 0; width: 100%; }
+}
+
+@media (max-width: 768px) {
+    .footer-inner { grid-template-columns: 1fr 1fr; gap: 30px; }
+    .footer-bottom-inner { flex-direction: column; text-align: center; }
+}
+
+@media (max-width: 480px) {
+    .footer-inner { grid-template-columns: 1fr; }
+}
+
+/* Spinner Loader Rotator Variable */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

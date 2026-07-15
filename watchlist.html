@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Watchlist - MovieDiscover</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="layout-container header-inner">
+            <a href="index.html" class="brand-logo">Movie<span class="logo-accent">Discover</span></a>
+            <nav class="site-nav">
+                <ul class="nav-links-list">
+                    <li><a href="index.html" class="nav-item">Home</a></li>
+                    <li><a href="trending.html" class="nav-item">Trending</a></li>
+                    <li><a href="watchlist.html" class="nav-item active">Watchlist</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content-wrapper">
+        <div class="layout-container">
+            <h1 class="hero-title" style="text-align: left; margin-bottom: 20px;">
+
+
+            </h1>My Saved Watchlist</h1>
+            <p style="color: var(--text-muted); margin-bottom: 40px;">Your custom collection of movies saved for later viewing.</p>
+            
+            <div id="movieList" class="movie-grid-layout"></div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="layout-container footer-bottom-inner" style="padding: 20px 24px; color: #777788; font-size: 0.8rem;">
+            <p>&copy; All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        function getStars(rating) {
+            var starCount = Math.round(rating / 2);
+            var starText = "";
+            for (var i = 0; i < 5; i++) {
+                starText += (i < starCount) ? "\u2605" : "\u2606";
+            }
+            return starText;
+        }
+
+        function displayWatchlist() {
+            var storedList = JSON.parse(localStorage.getItem('watchlist')) || [];
+            var targetWrapper = document.getElementById("movieList");
+            
+            if (storedList.length === 0) {
+                targetWrapper.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 60px 24px;">
+                        <h3>Your watchlist is currently empty.</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 20px;">Browse movies on the home dashboard to save them here.</p>
+                        <a href="index.html" style="color: var(--brand-accent); text-decoration: none; font-weight: 600;">← Discover Movies Now</a>
+                    </div>`;
+                return;
+            }
+
+            targetWrapper.innerHTML = "";
+            for (var i = 0; i < storedList.length; i++) {
+                var movie = storedList[i];
+                var starText = getStars(movie.rating);
+                var movieUrlParam = encodeURIComponent(movie.title);
+
+                targetWrapper.innerHTML += 
+                    "<a href='movie-details.html?title=" + movieUrlParam + "' class='movie-card'>" +
+                    "<img class='poster' src='" + movie.poster + "' alt='" + movie.title + "'>" +
+                    "<div class='card-info'>" +
+                    "<h3>" + movie.title + "</h3>" +
+                    "<p>Year: " + movie.year + "</p>" +
+                    "<p>Genre: " + (Array.isArray(movie.genre) ? movie.genre.join(", ") : movie.genre) + "</p>" +
+                    "<p class='stars'>" + starText + " (" + movie.rating + ")</p>" +
+                    "</div>" +
+                    "</a>";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", displayWatchlist);
+    </script>
+</body>
+</html>

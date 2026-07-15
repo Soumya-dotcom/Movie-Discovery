@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trending Movies - MovieDiscover</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="layout-container header-inner">
+            <a href="index.html" class="brand-logo">Movie<span class="logo-accent">Discover</span></a>
+            <nav class="site-nav">
+                <ul class="nav-links-list">
+                    <li><a href="index.html" class="nav-item">Home</a></li>
+                    <li><a href="trending.html" class="nav-item active">Trending</a></li>
+                    <li><a href="watchlist.html" class="nav-item">Watchlist</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content-wrapper">
+        <div class="layout-container">
+            <h1 class="hero-title" style="text-align: left; margin-bottom: 20px;">Trending Right Now</h1>
+            <p style="color: var(--text-muted); margin-bottom: 40px;">The most viewed and highly rated films of the week.</p>
+            <div id="movieList" class="movie-grid-layout"></div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="layout-container footer-bottom-inner" style="padding: 20px 24px; color: #777788; font-size: 0.8rem;">
+            <p>&copy; All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
