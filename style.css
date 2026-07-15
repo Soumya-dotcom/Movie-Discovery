@@ -218,8 +218,10 @@ body {
 /* --- MOVIE DISPLAY GRIDS --- */
 .movie-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 18px;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 24px;
+    padding: 20px 0;
+    width: 100%;
 }
 
 .movie-card {
