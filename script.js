@@ -1,9 +1,11 @@
 // --- NETWORK DATA HUB CONFIGURATION ---
 var movies = []; 
+var currentPage = 1;
 
 // TODO: Paste your secure v3 text key right inside the empty string quotes below
-const API_KEY = "fffa8cf32c1c5bb9cdfc864a1c48a7f7"; 
-const API_URL = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&sort_by=popularity.desc&vote_count.gte=150&page=1`;
+const API_KEY = "YOUR_ACTUAL_TMDB_API_KEY_HERE"; 
+// Modified URL: Removed the language restriction token to get all global languages
+const getApiUrl = (page) => `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&sort_by=popularity.desc&vote_count.gte=100&page=${page}`;
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
 const GENRE_MAP = {
@@ -14,24 +16,26 @@ const GENRE_MAP = {
 };
 
 // GLOBAL RETRIEVAL HANDSHAKE ENGINE
-async function loadMovieCatalog() {
+async function loadMovieCatalog(pageNumber = 1, appendData = false) {
     var movieListContainer = document.getElementById("movieList");
     if (!movieListContainer) return; 
 
-    movieListContainer.innerHTML = `
-        <div style="grid-column: 1/-1; text-align: center; padding: 60px 0; color: var(--text-muted);">
-            <div style="border: 4px solid rgba(255,255,255,0.1); border-left-color: var(--brand-accent); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px auto;"></div>
-            <p>Curating global cinema catalog channels...</p>
-        </div>
-    `;
+    if (!appendData) {
+        movieListContainer.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 60px 0; color: var(--text-muted);">
+                <div style="border: 4px solid rgba(255,255,255,0.1); border-left-color: var(--brand-accent); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px auto;"></div>
+                <p>Curating global cinema catalog channels...</p>
+            </div>
+        `;
+    }
 
     try {
-        var response = await fetch(API_URL);
+        var response = await fetch(getApiUrl(pageNumber));
         if (!response.ok) throw new Error("Catalog synchronization failure.");
         
         var data = await response.json();
         
-        movies = data.results.map(function(item) {
+        var fetchedMovies = data.results.map(function(item) {
             return {
                 title: item.title,
                 year: item.release_date ? item.release_date.split("-")[0] : "N/A",
@@ -43,20 +47,33 @@ async function loadMovieCatalog() {
             };
         });
 
+        if (appendData) {
+            movies = movies.concat(fetchedMovies);
+        } else {
+            movies = fetchedMovies;
+        }
+
         initializeRouting();
 
     } catch (error) {
-        movieListContainer.innerHTML = `
-            <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--brand-red);">
-                <h3>⚠️ Global Archive Retrieval Fault</h3>
-                <p>Unable to connect securely to TMDB streaming endpoints. Verify your token setup.</p>
-            </div>
-        `;
+        if(!appendData) {
+            movieListContainer.innerHTML = `
+                <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--brand-red);">
+                    <h3>⚠️ Global Archive Retrieval Fault</h3>
+                    <p>Unable to connect securely to TMDB streaming endpoints. Verify your token setup.</p>
+                </div>
+            `;
+        }
     }
 }
 
+// NEW: DYNAMIC PAGINATION ENGINE STEP
+function loadNextPage() {
+    currentPage += 1;
+    loadMovieCatalog(currentPage, true);
+}
+
 function initializeRouting() {
-    // Standardizes the path check to prevent absolute URI errors
     var currentPath = window.location.pathname.toLowerCase();
 
     if (currentPath.includes("trending.html")) {
@@ -64,17 +81,11 @@ function initializeRouting() {
         trendingMovies.sort(function(a, b) { return b.rating - a.rating; });
         showMovies(trendingMovies);
     } else if (currentPath.includes("movie-details.html")) {
-        // Safe check if render function exists
-        if (typeof renderMovieDetails === 'function') {
-            renderMovieDetails();
-        }
+        if (typeof renderMovieDetails === 'function') renderMovieDetails();
     } else if (currentPath.includes("watchlist.html")) {
-        if (typeof renderWatchlist === 'function') {
-            renderWatchlist();
-        }
+        if (typeof renderWatchlist === 'function') renderWatchlist();
     } else {
-        // Default fall-through back to index homepage layout channel
-        showMovies(movies);
+        filterMovies(); // Automatically applies dropdown configurations on dashboard page load
     }
 }
 
@@ -88,63 +99,64 @@ function showMovies(movieArray) {
         movieList.innerHTML = `
             <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">
                 <h3>No movies match your current parameters.</h3>
-                <p>Try resetting filters or changing terms.</p>
+                <p>Try resetting filters, selecting a different language channel, or changing terms.</p>
             </div>
         `;
         return;
     }
 
-    // Keep a global reference of the filtered array so the index lookup works flawlessly
     window.currentRenderedMovies = movieArray;
 
     movieArray.forEach(function(movie, index) {
         var starText = "\u2605".repeat(Math.round(movie.rating / 2));
 
-        // We pass ONLY the simple index number to the click handler to avoid quote breaks
         movieList.innerHTML += `
-            <a href="movie-details.html" onclick="saveActiveMovieByIndex(${index})" class="movie-card" aria-label="View Info for ${movie.title}">
+            <a href="movie-details.html" onclick="saveActiveMovieByIndex(hbarIndexLink_${index})" class="movie-card" aria-label="View Info for ${movie.title}">
                 <img class="poster" src="${movie.poster}" alt="${movie.title} poster image">
                 <div class="card-info">
                     <h3>${movie.title}</h3>
-                    <p>Year: ${movie.year}</p>
+                    <p>Year: ${movie.year} | Language: <strong>${movie.language}</strong></p>
                     <p class="stars">${starText} (${movie.rating.toFixed(1)})</p>
                 </div>
             </a>
         `;
+        
+        // Inline mapping fix helper assignment
+        var node = movieList.lastElementChild;
+        node.setAttribute("onclick", `saveActiveMovieByIndex(${index})`);
     });
 }
 
 function saveActiveMovieByIndex(index) {
-    // Look up the exact movie object from our secure reference array using the index number
     if (window.currentRenderedMovies && window.currentRenderedMovies[index]) {
         var selectedMovie = window.currentRenderedMovies[index];
         localStorage.setItem('activeMovieContext', JSON.stringify(selectedMovie));
     }
 }
-function saveActiveMovie(movieDataJson) {
-    localStorage.setItem('activeMovieContext', decodeURIComponent(movieDataJson));
-}
 
-// LIVE FILTER AND EVENT HOOKS
+// LIVE MULTI-FILTER LISTENER ASSIGNMENTS
 var searchBox = document.getElementById("searchBox");
 var genreSelect = document.getElementById("genreSelect");
+var languageSelect = document.getElementById("languageSelect"); // New listener target
 
 if (searchBox) searchBox.addEventListener("input", filterMovies);
 if (genreSelect) genreSelect.addEventListener("change", filterMovies);
+if (languageSelect) languageSelect.addEventListener("change", filterMovies);
 
 function filterMovies() {
-    var searchText = searchBox.value.toLowerCase().trim();
-    var selectedGenre = genreSelect.value;
+    var searchText = (searchBox ? searchBox.value.toLowerCase().trim() : "");
+    var selectedGenre = (genreSelect ? genreSelect.value : "All");
+    var selectedLanguage = (languageSelect ? languageSelect.value : "All");
     var results = [];
 
     for (var i = 0; i < movies.length; i++) {
         var movie = movies[i];
+        
         var titleMatches = movie.title.toLowerCase().includes(searchText);
-        var genreMatches = (selectedGenre === "All" || movie.genre.some(function(g) {
-            return g.trim() === selectedGenre.trim();
-        }));
+        var genreMatches = (selectedGenre === "All" || movie.genre.includes(selectedGenre));
+        var languageMatches = (selectedLanguage === "All" || movie.language === selectedLanguage);
 
-        if (titleMatches && genreMatches) {
+        if (titleMatches && genreMatches && languageMatches) {
             results.push(movie);
         }
     }
@@ -183,7 +195,7 @@ function renderMovieDetails() {
             <div class="details-info-zone">
                 <h1>${movie.title} (${movie.year})</h1>
                 <div class="meta-tags">
-                    <span class="tag">${movie.language}</span>
+                    <span class="tag">Language: ${movie.language}</span>
                     <span class="tag">${movie.genre.join(", ")}</span>
                 </div>
                 <p class="rating-display">★ Rating: <strong>${movie.rating.toFixed(1)} / 10</strong></p>
@@ -239,19 +251,31 @@ function renderWatchlist() {
         
         watchlistGrid.innerHTML += `
             <div class="movie-card" style="position: relative;">
-                <a href="movie-details.html" onclick="saveActiveMovie('${safePayload}')" style="text-decoration: none; color: inherit;">
+                <a href="movie-details.html" style="text-decoration: none; color: inherit;">
                     <img class="poster" src="${movie.poster}" alt="${movie.title}">
                     <div class="card-info">
                         <h3>${movie.title}</h3>
-                        <p>Year: ${movie.year}</p>
+                        <p>Year: ${movie.year} | Lang: ${movie.language}</p>
                         <p class="stars">${"\u2605".repeat(Math.round(movie.rating / 2))} (${movie.rating.toFixed(1)})</p>
                     </div>
                 </a>
                 <div style="padding: 0 16px 16px 16px;">
-                    <button onclick="removeFromWatchlistByIndex(${i})" class="btn btn-danger" style="width: 100%; font-size: 0.85rem; padding: 8px 0;">Remove</button>
+                    <button class="btn btn-danger" style="width: 100%; font-size: 0.85rem; padding: 8px 0;">Remove</button>
                 </div>
             </div>
         `;
+        
+        // Structural safety anchors for watchlist card hooks
+        var cardNode = watchlistGrid.lastElementChild;
+        cardNode.querySelector("a").setAttribute("onclick", `saveActiveWatchlistMovie(${i})`);
+        cardNode.querySelector("button").setAttribute("onclick", `removeFromWatchlistByIndex(${i})`);
+    }
+}
+
+function saveActiveWatchlistMovie(index) {
+    var currentWatchlist = JSON.parse(localStorage.getItem('userWatchlist')) || [];
+    if(currentWatchlist[index]) {
+        localStorage.setItem('activeMovieContext', JSON.stringify(currentWatchlist[index]));
     }
 }
 
@@ -263,4 +287,4 @@ function removeFromWatchlistByIndex(index) {
 }
 
 // Run initial server fetch execution
-loadMovieCatalog();
+loadMovieCatalog(currentPage);
