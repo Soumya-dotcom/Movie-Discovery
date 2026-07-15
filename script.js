@@ -2,11 +2,10 @@
 var movies = []; 
 var currentPage = 1;
 
-// TODO: Paste your secure v3 text key right inside the empty string quotes below
+// TODO: Paste your secure alphanumeric v3 text key right inside the quotes below
 const API_KEY = "fffa8cf32c1c5bb9cdfc864a1c48a7f7"; 
 
 // This helper function pieces together our API request URL dynamically. 
-// If a user selects a specific language, we tell TMDB to target that specific international library.
 const getApiUrl = (page, langIso = "") => {
     let url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&sort_by=popularity.desc&vote_count.gte=50&page=${page}`;
     if (langIso && langIso !== "All") {
@@ -41,13 +40,13 @@ async function loadMovieCatalog(pageNumber = 1, appendData = false) {
         }
     }
     
-    var activeLang = languageSelect ? languageSelect.value : "All";
+    var activeLang = (languageSelect && languageSelect.value) ? languageSelect.value : "All";
 
     // Show a clean loading animation to let the user know the network is processing
     if (!appendData) {
         movieListContainer.innerHTML = `
             <div style="grid-column: 1/-1; text-align: center; padding: 60px 0; color: var(--text-muted);">
-                <div style="border: 4px solid rgba(255,255,255,0.1); border-left-color: var(--brand-accent); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px auto;"></div>
+                <div style="border: 4px solid rgba(255,255,255,0.1); border-left-color: var(--brand-gold); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px auto;"></div>
                 <p>Curating global cinema catalog channels...</p>
             </div>
         `;
@@ -68,7 +67,7 @@ async function loadMovieCatalog(pageNumber = 1, appendData = false) {
                 rating: item.vote_average,
                 language: item.original_language.toUpperCase(), 
                 poster: item.poster_path ? (IMAGE_BASE_URL + item.poster_path) : "https://via.placeholder.com/500x750?text=No+Poster",
-                description: item.overview || "No description provided." /* UNIFIED: Explicitly captures TMDB description payload here */
+                description: item.overview || "No description provided."
             };
         });
 
@@ -79,11 +78,15 @@ async function loadMovieCatalog(pageNumber = 1, appendData = false) {
             movies = fetchedMovies;
         }
 
-        // Send our sorted data to the page router to paint the layout
-        initializeRouting();
+        // Render standard home list filters or trending filters based on active viewport
+        var currentPath = window.location.pathname.toLowerCase();
+        if (currentPath.includes("trending.html")) {
+            renderTrendingList();
+        } else {
+            filterMovies(); 
+        }
 
     } catch (error) {
-        // Safe fallback view if the user has a bad internet connection or a broken API token
         if(!appendData) {
             movieListContainer.innerHTML = `
                 <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--brand-red);">
@@ -106,9 +109,7 @@ function loadNextPage() {
 
     currentPage += 1;
     
-    // Fetch the next 20 movies and append them safely to the bottom layout matrix
     loadMovieCatalog(currentPage, true).then(function() {
-        // Reset the button state back to active once the network files are rendered
         if (btn) {
             btn.textContent = "Show More Movies";
             btn.style.opacity = "1";
@@ -117,42 +118,29 @@ function loadNextPage() {
     });
 }
 
-// Checks which HTML file the user is currently looking at so we display the correct data rules
-function initializeRouting() {
-    var currentPath = window.location.pathname.toLowerCase();
-
-    if (currentPath.includes("trending.html")) {
-        // TRENDING OVERRIDE: Clear language parameters to look up globally top-rated movies
-        var savedLanguage = localStorage.getItem('userSelectedLanguage') || "All";
-        var trendingMovies = movies;
-        
-        if (savedLanguage !== "All") {
-            trendingMovies = movies.filter(function(m) {
-                return m.language === savedLanguage.toUpperCase();
-            });
-        }
-
-        trendingMovies = trendingMovies.filter(function(m) { return m.rating >= 6.5; });
-        trendingMovies.sort(function(a, b) { return b.rating - a.rating; });
-        showMovies(trendingMovies);
-    } else if (currentPath.includes("movie-details.html")) {
-        if (typeof renderMovieDetails === 'function') renderMovieDetails();
-    } else if (currentPath.includes("watchlist.html")) {
-        if (typeof renderWatchlist === 'function') renderWatchlist();
-    } else {
-        // Default to the dashboard home logic and look at filter selections
-        filterMovies(); 
+// Filters down the database to render globally high-rated films for trending view
+function renderTrendingList() {
+    var savedLanguage = localStorage.getItem('userSelectedLanguage') || "All";
+    var trendingMovies = movies;
+    
+    if (savedLanguage !== "All") {
+        trendingMovies = movies.filter(function(m) {
+            return m.language === savedLanguage.toUpperCase();
+        });
     }
+
+    trendingMovies = trendingMovies.filter(function(m) { return m.rating >= 6.5; });
+    trendingMovies.sort(function(a, b) { return b.rating - a.rating; });
+    showMovies(trendingMovies);
 }
 
-// Loops through our finalized movie array and appends individual HTML card code blocks to the dashboard grid
+// Loops through our finalized movie array and appends individual HTML card code blocks to the grid
 function showMovies(movieArray) {
     var movieList = document.getElementById("movieList");
     if (!movieList) return; 
     
     movieList.innerHTML = "";
 
-    // Empty state safeguard if the user applies search criteria that yields nothing
     if (movieArray.length === 0) {
         movieList.innerHTML = `
             <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">
@@ -163,7 +151,6 @@ function showMovies(movieArray) {
         return;
     }
 
-    // Save a global snapshot of the current list layout so our index number selections don't get mixed up
     window.currentRenderedMovies = movieArray;
 
     movieArray.forEach(function(movie, index) {
@@ -180,7 +167,6 @@ function showMovies(movieArray) {
             </a>
         `;
         
-        // Avoids breaking HTML quotes by appending the click tracker directly via the JS DOM element
         var node = movieList.lastElementChild;
         node.setAttribute("onclick", `saveActiveMovieByIndex(${index})`);
     });
@@ -202,8 +188,6 @@ var languageSelect = document.getElementById("languageSelect");
 if (searchBox) searchBox.addEventListener("input", filterMovies);
 if (genreSelect) genreSelect.addEventListener("change", filterMovies);
 
-// If the user shifts the language dropdown selection, save the parameters to localStorage memory cache,
-// then reset pagination back to page 1 and fetch fresh language files
 if (languageSelect) {
     languageSelect.addEventListener("change", function() {
         localStorage.setItem('userSelectedLanguage', languageSelect.value); 
@@ -252,11 +236,9 @@ function renderMovieDetails() {
     var currentWatchlist = JSON.parse(localStorage.getItem('userWatchlist')) || [];
     var isSaved = currentWatchlist.some(function(item) { return item.title === movie.title; });
     
-    // Updates UI button state visually based on whether the item is inside the watchlist array or not
     var btnText = isSaved ? "Remove from Watchlist" : "Add to Watchlist";
     var btnClass = isSaved ? "btn btn-danger" : "btn btn-primary";
 
-    // UNIFIED FIX: Safely reads and displays the mapped description field string layout context
     wrapper.innerHTML = `
         <div class="details-grid">
             <div>
@@ -288,18 +270,16 @@ function toggleWatchlist() {
     var btn = document.getElementById("watchlistBtn");
 
     if (existingIndex > -1) {
-        // Movie is already there, so remove it
         currentWatchlist.splice(existingIndex, 1);
         if(btn) { btn.textContent = "Add to Watchlist"; btn.className = "btn btn-primary"; }
     } else {
-        // Movie is new to the list, so add it
         currentWatchlist.push(movie);
         if(btn) { btn.textContent = "Remove from Watchlist"; btn.className = "btn btn-danger"; }
     }
     localStorage.setItem('userWatchlist', JSON.stringify(currentWatchlist));
 }
 
-l// Pulls down the saved items array from local browser storage and displays them in a neat collection view grid
+// Pulls down the saved items array from local browser storage and displays them in a neat collection view grid
 function renderWatchlist() {
     var watchlistGrid = document.getElementById("watchlistGrid");
     if (!watchlistGrid) return;
@@ -307,7 +287,6 @@ function renderWatchlist() {
     var currentWatchlist = JSON.parse(localStorage.getItem('userWatchlist')) || [];
     watchlistGrid.innerHTML = "";
 
-    // If the storage array is completely empty, paint the golden-bordered notification card
     if (currentWatchlist.length === 0) {
         watchlistGrid.innerHTML = `
             <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; background: var(--bg-card); border-radius: 16px; border: 1px dashed rgba(229,184,66,0.25); max-width: 600px; margin: 40px auto; box-shadow: 0 8px 32px rgba(0,0,0,0.4);">
@@ -319,7 +298,6 @@ function renderWatchlist() {
         return;
     }
 
-    // Otherwise, loop and print card outputs
     for (var i = 0; i < currentWatchlist.length; i++) {
         var movie = currentWatchlist[i];
         
@@ -345,7 +323,13 @@ function renderWatchlist() {
     }
 }
 
-// Instantly deletes an item out of our browser array index and triggers a rapid page repaint to keep the layout accurate
+function saveActiveWatchlistMovie(index) {
+    var currentWatchlist = JSON.parse(localStorage.getItem('userWatchlist')) || [];
+    if(currentWatchlist[index]) {
+        localStorage.setItem('activeMovieContext', JSON.stringify(currentWatchlist[index]));
+    }
+}
+
 function removeFromWatchlistByIndex(index) {
     var currentWatchlist = JSON.parse(localStorage.getItem('userWatchlist')) || [];
     currentWatchlist.splice(index, 1);
@@ -353,25 +337,21 @@ function removeFromWatchlistByIndex(index) {
     renderWatchlist();
 }
 
-// --- SECURE INITIALIZATION RUNNER ENGINE ---
-// This replaces the direct "loadMovieCatalog(currentPage);" call at the bottom
+// --- BULLETPROOF ROUTER STARTUP FRAMEWORK ---
 function startApplication() {
     var currentPath = window.location.pathname.toLowerCase();
 
     if (currentPath.includes("movie-details.html")) {
-        // Details page setup: skip fetching a new list, just render the single movie profile
+        // Runs text injection immediately without fetching TMDB grids
         renderMovieDetails();
     } else if (currentPath.includes("watchlist.html")) {
-        // Watchlist page setup: skip API fetch, read saved local items immediately
+        // Runs empty state or storage array lookup immediately
         renderWatchlist();
-    } else if (currentPath.includes("trending.html")) {
-        // Trending page setup: fetch the core dataset to parse top ratings
-        loadMovieCatalog(1, false);
     } else {
-        // Home page dashboard (index.html): fetch catalog data fresh from server
+        // Runs home catalog index rows setup automatically on launch
         loadMovieCatalog(1, false);
     }
 }
 
-// Fire off the initialization check as soon as the script finishes loading in the browser context
+// Initialize boot parameters
 startApplication();
