@@ -1,4 +1,4 @@
-/* --- BASE VARIANT STYLESHEET REBOOT --- */
+/* --- BASE STYLESHEET CORE --- */
 * {
     margin: 0;
     padding: 0;
@@ -10,8 +10,8 @@
     --bg-main: #080a0c;
     --bg-card: #11161d;
     --bg-input: #1a212a;
-    --brand-gold: #e5b842;      /* Vibrant Premium Gold Theme */
-    --brand-gold-hover: #fcd36a;/* Bright highlight gold */
+    --brand-gold: #e5b842;      
+    --brand-gold-hover: #fcd36a;
     --brand-red: #ef4444;
     --text-light: #f3f4f6;
     --text-muted: #8e9aa8;
@@ -23,20 +23,20 @@ body {
     color: var(--text-light);
     min-height: 100vh;
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* Allows the footer to naturally push down */
     -webkit-font-smoothing: antialiased;
 }
 
-/* --- EXPANDED CONTAINER WIDTHS (Reduces Left/Right Blank Spaces) --- */
-.container, .nav-container, .details-container, .footer-container {
-    max-width: 95%;      /* Increased footprint scaling to utilize broad widescreen real estate */
+/* --- EXPANDED CONTAINER WIDTHS --- */
+.container, .details-container {
+    max-width: 95%;      
     width: 100%;
     margin: 0 auto;
     padding: 0 30px;
-    flex: 1;
+    flex: 1; /* Pushes everything below it down to the bottom */
 }
 
-/* --- THEME NAVIGATION NAVBAR --- */
+/* --- NAVBAR BRAND CENTERING RULES --- */
 .navbar {
     background-color: rgba(17, 22, 29, 0.95);
     backdrop-filter: blur(12px);
@@ -47,9 +47,16 @@ body {
     border-bottom: 1px solid rgba(229, 184, 66, 0.15);
     display: flex;
     align-items: center;
+    justify-content: center; /* Centers items inside navbar flex space */
 }
 
-/* Logo updated to Premium Brand Gold with Illumination Glow Matrix */
+.nav-container {
+    width: 100%;
+    display: flex;
+    justify-content: center; /* Ensures the logo sits in the exact center */
+    padding: 0 30px;
+}
+
 .logo {
     color: var(--brand-gold);
     font-size: 1.8rem;
@@ -65,23 +72,34 @@ body {
     text-shadow: 0 0 15px rgba(252, 211, 106, 0.6), 0 0 30px rgba(229, 184, 66, 0.3);
 }
 
+/* --- SUB-NAVIGATION FRAMEWORK --- */
+.sub-navigation {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+}
+
 .nav-links {
     display: flex;
     list-style: none;
-    gap: 30px;
+    gap: 35px;
+    background: rgba(26, 33, 42, 0.4);
+    padding: 8px 30px;
+    border-radius: 50px; 
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    width: fit-content;
 }
 
 .nav-links a {
     color: var(--text-muted);
     text-decoration: none;
     font-weight: 600;
-    font-size: 1rem;
-    padding: 8px 0;
+    font-size: 0.95rem;
+    padding: 6px 0;
     position: relative;
     transition: color 0.3s ease;
 }
 
-/* Premium Gold Hover Underline sliding animation effect */
 .nav-links a::after {
     content: '';
     position: absolute;
@@ -106,14 +124,13 @@ body {
     color: var(--brand-gold);
 }
 
-/* --- CENTERED HEADER ZONE WITH NEON TYPOGRAPHY GLOW --- */
+/* --- CENTERED HEADER ZONE --- */
 .page-header {
-    text-align: center;      /* Centers the Header */
-    margin: 45px auto 40px auto;
+    text-align: center;      
+    margin: 45px auto 30px auto;
     max-width: 800px;
 }
 
-/* Header Text elements transformed to centered high-density gold themes */
 .page-header h2 {
     font-size: 2.8rem;
     font-weight: 800;
@@ -131,15 +148,16 @@ body {
     line-height: 1.6;
 }
 
-/* --- ATTRACTIVE CONTROLS & DROPDOWN ENGINE --- */
+/* --- CONTROLS HUB OVAL LAYOUTS --- */
 .controls-hub {
     display: flex;
     gap: 16px;
     margin-bottom: 35px;
     background: rgba(17, 22, 29, 0.6);
     padding: 16px;
-    border-radius: 12px;
+    border-radius: 50px; 
     border: 1px solid rgba(255, 255, 255, 0.05);
+    align-items: center;
 }
 
 .search-wrapper {
@@ -150,8 +168,8 @@ body {
     width: 100%;
     background: var(--bg-input);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 14px 18px;
-    border-radius: 8px;
+    padding: 14px 24px;
+    border-radius: 50px; 
     color: var(--text-light);
     font-size: 0.95rem;
     outline: none;
@@ -163,7 +181,6 @@ body {
     box-shadow: 0 0 0 3px rgba(229, 184, 66, 0.15);
 }
 
-/* Custom Dropdown Arrow Container Framework */
 .select-wrapper {
     flex: 1;
     position: relative;
@@ -174,48 +191,36 @@ body {
     font-size: 0.75rem;
     color: var(--brand-gold);
     position: absolute;
-    right: 16px;
+    right: 22px;
     top: 50%;
     transform: translateY(-50%);
     pointer-events: none;
-    transition: color 0.3s ease;
 }
 
 .controls-hub select {
     width: 100%;
     background: var(--bg-input);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 14px 40px 14px 18px;
-    border-radius: 8px;
+    padding: 14px 40px 14px 22px;
+    border-radius: 50px; 
     color: var(--text-light);
     font-size: 0.95rem;
     outline: none;
     cursor: pointer;
-    appearance: none; /* Strip away default operating system grey arrows */
+    appearance: none; 
     -webkit-appearance: none;
-    transition: all 0.3s ease;
 }
 
-.select-wrapper:hover::after {
-    color: var(--brand-gold-hover);
-}
-
-.controls-hub select:focus {
-    border-color: var(--brand-gold);
-    box-shadow: 0 0 0 3px rgba(229, 184, 66, 0.15);
-}
-
-/* --- DYNAMIC MOVIE GRID DISPLAY SYSTEMS --- */
+/* --- MOVIE DISPLAY GRIDS --- */
 .movie-grid {
     display: grid;
-    /* Fits even more micro cards per row now that screen side gutters are minimized */
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 18px;
 }
 
 .movie-card {
     background: var(--bg-card);
-    border-radius: 8px;
+    border-radius: 12px;
     overflow: hidden;
     text-decoration: none;
     color: inherit;
@@ -294,7 +299,7 @@ body {
 .tag {
     display: inline-block;
     padding: 6px 16px;
-    border-radius: 20px;
+    border-radius: 50px; 
     font-size: 0.8rem;
     font-weight: 700;
     margin-right: 10px;
@@ -316,13 +321,13 @@ body {
     font-size: 1.05rem;
 }
 
-/* --- THEME CUSTOM BUTTON DESIGNS --- */
+/* --- OVAL CAPSULE BUTTONS --- */
 .btn {
     display: inline-block;
-    padding: 14px 32px;
+    padding: 14px 36px;
     font-size: 0.95rem;
     font-weight: 700;
-    border-radius: 8px;
+    border-radius: 50px; 
     border: none;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -353,17 +358,22 @@ body {
     transform: translateY(-2px);
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* --- ATTRACTIVE PRODUCTION-TIER FOOTER --- */
+/* --- FULL REAL SITE FOOTER STYLING --- */
 .footer {
     background-color: #0b0f14;
     border-top: 1px solid rgba(229, 184, 66, 0.15);
     padding: 60px 0 30px 0;
     margin-top: 80px;
+    width: 100%;
+}
+
+.footer-container {
+    max-width: 95%;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 40px;
+    padding: 0 30px;
 }
 
 .footer-brand h3 {
@@ -410,14 +420,16 @@ body {
 }
 
 .footer-bottom {
-    margin-top: 50px;
-    padding: 25px 0 0 0;
+    max-width: 95%;
+    margin: 50px auto 0 auto;
+    padding: 25px 30px 0 30px;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
     display: flex;
     justify-content: space-between;
     align-items: center;
     color: var(--text-muted);
     font-size: 0.88rem;
+    width: 100%;
 }
 
 .footer-socials {
@@ -436,13 +448,10 @@ body {
     color: var(--brand-gold);
 }
 
-/* RESPONSIVE LAYOUT CONSTRAINTS */
+/* RESPONSIVE LAYOUTS */
 @media (max-width: 900px) {
-    .footer-container {
-        grid-template-columns: 1fr 1fr;
-    }
+    .footer-container { grid-template-columns: 1fr 1fr; }
 }
-
 @media (max-width: 600px) {
     .details-grid, .footer-container, .footer-bottom {
         grid-template-columns: 1fr;
@@ -450,23 +459,14 @@ body {
         gap: 30px;
         text-align: center;
     }
-    .footer-bottom {
-        align-items: center;
-    }
-    .footer-socials {
-        justify-content: center;
-    }
-    .controls-hub {
-        flex-direction: column;
-    }
-    .footer-links a {
-        margin: 0 auto;
-    }
+    .footer-bottom { align-items: center; }
+    .footer-socials { justify-content: center; }
+    .controls-hub { flex-direction: column; border-radius: 24px; }
+    .controls-hub input, .controls-hub select { border-radius: 24px; }
+    .footer-links a { margin: 0 auto; }
 }
 
-/* Corrected placeholder option visibility state context matching */
-select:invalid,
-select option[disabled] {
+select:invalid, select option[disabled] {
     color: var(--text-muted);
-    opacity: 0.7; /* Restored opacity visibility layout scaling */
+    opacity: 0.7; 
 }

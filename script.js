@@ -279,29 +279,6 @@ function renderMovieDetails() {
         </div>
     `;
 }
-
-// Toggles the movie inside our local persistent array when the user clicks the watchlist tracking button
-function toggleWatchlist() {
-    var rawData = localStorage.getItem('activeMovieContext');
-    if (!rawData) return;
-    
-    var movie = JSON.parse(rawData);
-    var currentWatchlist = JSON.parse(localStorage.getItem('userWatchlist')) || [];
-    var existingIndex = currentWatchlist.findIndex(function(item) { return item.title === movie.title; });
-    var btn = document.getElementById("watchlistBtn");
-
-    if (existingIndex > -1) {
-        // Movie is already there, so remove it
-        currentWatchlist.splice(existingIndex, 1);
-        if(btn) { btn.textContent = "Add to Watchlist"; btn.className = "btn btn-primary"; }
-    } else {
-        // Movie is new to the list, so add it
-        currentWatchlist.push(movie);
-        if(btn) { btn.textContent = "Remove from Watchlist"; btn.className = "btn btn-danger"; }
-    }
-    localStorage.setItem('userWatchlist', JSON.stringify(currentWatchlist));
-}
-
 // Pulls down the saved items array from local browser storage and displays them in a neat collection view grid
 function renderWatchlist() {
     var watchlistGrid = document.getElementById("watchlistGrid");
@@ -310,13 +287,13 @@ function renderWatchlist() {
     var currentWatchlist = JSON.parse(localStorage.getItem('userWatchlist')) || [];
     watchlistGrid.innerHTML = "";
 
-    // Inform user cleanly if they don't have any items bookmarked yet
+    // CRITICAL EMPTY STATE FIX: Inform the user cleanly if their saved collection is completely empty
     if (currentWatchlist.length === 0) {
         watchlistGrid.innerHTML = `
-            <div style="grid-column: 1/-1; text-align: center; padding: 60px 0; color: var(--text-muted);">
-                <h3>Your Watchlist is empty.</h3>
-                <p>Browse the catalog channels to add titles.</p>
-                <a href="index.html" class="btn btn-primary" style="margin-top: 20px;">Browse Movies</a>
+            <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; background: var(--bg-card); border-radius: 16px; border: 1px dashed rgba(229,184,66,0.2); max-width: 600px; margin: 40px auto;">
+                <h3 style="color: var(--brand-gold); font-size: 1.4rem; margin-bottom: 10px;">Your Watchlist is Empty</h3>
+                <p style="color: var(--text-muted); margin-bottom: 25px; font-size: 0.95rem;">You haven't bookmarked any global cinema profiles yet. Browse the home dashboard catalog channels to add titles.</p>
+                <a href="index.html" class="btn btn-primary">Browse Movies</a>
             </div>
         `;
         return;
@@ -341,14 +318,35 @@ function renderWatchlist() {
             </div>
         `;
         
-        // Maps click logic indexes safely to our specific watchlist arrays components
         var cardNode = watchlistGrid.lastElementChild;
         cardNode.querySelector("a").setAttribute("onclick", `saveActiveWatchlistMovie(${i})`);
         cardNode.querySelector("button").setAttribute("onclick", `removeFromWatchlistByIndex(${i})`);
     }
 }
 
-// Caches the active movie clicked inside the watchlist view so it can be unpacked by the details engine portal
+// Toggles the movie inside our local persistent array when the user clicks the watchlist tracking button
+function toggleWatchlist() {
+    var rawData = localStorage.getItem('activeMovieContext');
+    if (!rawData) return;
+    
+    var movie = JSON.parse(rawData);
+    var currentWatchlist = JSON.parse(localStorage.getItem('userWatchlist')) || [];
+    var existingIndex = currentWatchlist.findIndex(function(item) { return item.title === movie.title; });
+    var btn = document.getElementById("watchlistBtn");
+
+    if (existingIndex > -1) {
+        // Movie is already there, so remove it
+        currentWatchlist.splice(existingIndex, 1);
+        if(btn) { btn.textContent = "Add to Watchlist"; btn.className = "btn btn-primary"; }
+    } else {
+        // Movie is new to the list, so add it
+        currentWatchlist.push(movie);
+        if(btn) { btn.textContent = "Remove from Watchlist"; btn.className = "btn btn-danger"; }
+    }
+    localStorage.setItem('userWatchlist', JSON.stringify(currentWatchlist));
+}
+
+//Caches the active movie clicked inside the watchlist view so it can be unpacked by the details engine portal
 function saveActiveWatchlistMovie(index) {
     var currentWatchlist = JSON.parse(localStorage.getItem('userWatchlist')) || [];
     if(currentWatchlist[index]) {
