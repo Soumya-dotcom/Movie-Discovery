@@ -2,10 +2,18 @@
 var movies = []; 
 var currentPage = 1;
 
-// TODO: Paste your secure v3 text key right inside the empty string quotes below
+// TODO: Ensure your secure v3 key is pasted inside these quotes
 const API_KEY = "fffa8cf32c1c5bb9cdfc864a1c48a7f7"; 
-// Modified URL: Removed the language restriction token to get all global languages
-const getApiUrl = (page) => `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&sort_by=popularity.desc&vote_count.gte=100&page=${page}`;
+
+// MODIFIED URL: Dynamically appends language queries to the network request pipeline
+const getApiUrl = (page, langIso = "") => {
+    let url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&sort_by=popularity.desc&vote_count.gte=50&page=${page}`;
+    if (langIso && langIso !== "All") {
+        url += `&with_original_language=${langIso.toLowerCase()}`;
+    }
+    return url;
+};
+
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
 const GENRE_MAP = {
@@ -20,6 +28,9 @@ async function loadMovieCatalog(pageNumber = 1, appendData = false) {
     var movieListContainer = document.getElementById("movieList");
     if (!movieListContainer) return; 
 
+    var languageSelect = document.getElementById("languageSelect");
+    var activeLang = languageSelect ? languageSelect.value : "All";
+
     if (!appendData) {
         movieListContainer.innerHTML = `
             <div style="grid-column: 1/-1; text-align: center; padding: 60px 0; color: var(--text-muted);">
@@ -30,7 +41,7 @@ async function loadMovieCatalog(pageNumber = 1, appendData = false) {
     }
 
     try {
-        var response = await fetch(getApiUrl(pageNumber));
+        var response = await fetch(getApiUrl(pageNumber, activeLang));
         if (!response.ok) throw new Error("Catalog synchronization failure.");
         
         var data = await response.json();
@@ -67,7 +78,6 @@ async function loadMovieCatalog(pageNumber = 1, appendData = false) {
     }
 }
 
-// NEW: DYNAMIC PAGINATION ENGINE STEP
 function loadNextPage() {
     currentPage += 1;
     loadMovieCatalog(currentPage, true);
@@ -85,7 +95,7 @@ function initializeRouting() {
     } else if (currentPath.includes("watchlist.html")) {
         if (typeof renderWatchlist === 'function') renderWatchlist();
     } else {
-        filterMovies(); // Automatically applies dropdown configurations on dashboard page load
+        filterMovies(); 
     }
 }
 
@@ -99,7 +109,7 @@ function showMovies(movieArray) {
         movieList.innerHTML = `
             <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">
                 <h3>No movies match your current parameters.</h3>
-                <p>Try resetting filters, selecting a different language channel, or changing terms.</p>
+                <p>Try resetting search filters or changing terms.</p>
             </div>
         `;
         return;
@@ -111,7 +121,7 @@ function showMovies(movieArray) {
         var starText = "\u2605".repeat(Math.round(movie.rating / 2));
 
         movieList.innerHTML += `
-            <a href="movie-details.html" onclick="saveActiveMovieByIndex(hbarIndexLink_${index})" class="movie-card" aria-label="View Info for ${movie.title}">
+            <a href="movie-details.html" class="movie-card" aria-label="View Info for ${movie.title}">
                 <img class="poster" src="${movie.poster}" alt="${movie.title} poster image">
                 <div class="card-info">
                     <h3>${movie.title}</h3>
@@ -121,7 +131,6 @@ function showMovies(movieArray) {
             </a>
         `;
         
-        // Inline mapping fix helper assignment
         var node = movieList.lastElementChild;
         node.setAttribute("onclick", `saveActiveMovieByIndex(${index})`);
     });
@@ -137,16 +146,22 @@ function saveActiveMovieByIndex(index) {
 // LIVE MULTI-FILTER LISTENER ASSIGNMENTS
 var searchBox = document.getElementById("searchBox");
 var genreSelect = document.getElementById("genreSelect");
-var languageSelect = document.getElementById("languageSelect"); // New listener target
+var languageSelect = document.getElementById("languageSelect"); 
 
 if (searchBox) searchBox.addEventListener("input", filterMovies);
 if (genreSelect) genreSelect.addEventListener("change", filterMovies);
-if (languageSelect) languageSelect.addEventListener("change", filterMovies);
+
+// NEW ELEMENT LOGIC: Swapping languages completely triggers a fresh, targeted API call
+if (languageSelect) {
+    languageSelect.addEventListener("change", function() {
+        currentPage = 1; // Reset pagination page count
+        loadMovieCatalog(currentPage, false);
+    });
+}
 
 function filterMovies() {
     var searchText = (searchBox ? searchBox.value.toLowerCase().trim() : "");
     var selectedGenre = (genreSelect ? genreSelect.value : "All");
-    var selectedLanguage = (languageSelect ? languageSelect.value : "All");
     var results = [];
 
     for (var i = 0; i < movies.length; i++) {
@@ -154,9 +169,8 @@ function filterMovies() {
         
         var titleMatches = movie.title.toLowerCase().includes(searchText);
         var genreMatches = (selectedGenre === "All" || movie.genre.includes(selectedGenre));
-        var languageMatches = (selectedLanguage === "All" || movie.language === selectedLanguage);
 
-        if (titleMatches && genreMatches && languageMatches) {
+        if (titleMatches && genreMatches) {
             results.push(movie);
         }
     }
@@ -265,7 +279,6 @@ function renderWatchlist() {
             </div>
         `;
         
-        // Structural safety anchors for watchlist card hooks
         var cardNode = watchlistGrid.lastElementChild;
         cardNode.querySelector("a").setAttribute("onclick", `saveActiveWatchlistMovie(${i})`);
         cardNode.querySelector("button").setAttribute("onclick", `removeFromWatchlistByIndex(${i})`);
