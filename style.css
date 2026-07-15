@@ -490,5 +490,5 @@ body {
 select:invalid,
 select option[disabled] {
     color: var(--text-muted);
-    opacity: 0.7;
+    opacity: 0.2;
 }
