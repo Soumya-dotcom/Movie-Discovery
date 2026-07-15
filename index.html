@@ -3,103 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discover Movies</title>
+    <title>CineDiscover - Global Cinema Catalog</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <header class="site-header">
-        <div class="layout-container header-inner">
-            <a href="index.html" class="brand-logo" aria-label="CineDiscover Home">
-                <span class="logo-icon"></span>Movie<span class="logo-accent">Discover</span>
-            </a>
-            
-            <nav class="site-nav" aria-label="Main Navigation">
-                <ul class="nav-links-list">
-                    <li><a href="index.html" class="nav-item active">Home</a></li>
-                    <li><a href="trending.html" class="nav-item">Trending</a></li>
-                    <li><a href="watchlist.html" class="nav-item">Watchlist</a></li>
-                </ul>
-            </nav>
-
-            <div class="header-controls">
-                <input type="text" id="searchBox" placeholder="Search movie title...">
-                <select id="genreSelect">
-                    <option value="All">All genre</option>
-                    <option value="Action">Action</option>
-                    <option value="Animation">Animation</option>
-                    <option value="Biography">Biography</option>
-                    <option value="Comedy">Comedy</option>
-                    <option value="Drama">Drama</option>
-                    <option value="Horror">Horror</option>
-                    <option value="Mythological">Mythological</option>
-                    <option value="Sci-Fi">Sci-Fi</option>
-                </select>
-            </div>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">CineDiscover</a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="trending.html">Trending</a></li>
+                <li><a href="watchlist.html">Watchlist</a></li>
+            </ul>
         </div>
-    </header>
+    </nav>
 
-    <main class="main-content-wrapper">
-        <div class="layout-container">
-            
-            <section class="hero-billboard">
-                <p class="eyebrow">NOW STREAMING</p>
-                <h1 class="hero-title">DISCOVER MOVIES</h1>
-                <p class="subtitle">Watch your favourite movie.</p>
+    <main class="container">
+        <header class="page-header">
+            <h2>Discover Movies</h2>
+            <p>Your ultimate digital portal for exploring global cinema data.</p>
+        </header>
+
+        <div class="controls-hub">
+            <input type="text" id="searchBox" placeholder="Search movie title..." aria-label="Search movies">
+            <select id="genreSelect" aria-label="Filter by genre">
+                <option value="All">All Genres</option>
+                <option value="Action">Action</option>
+                <option value="Adventure">Adventure</option>
+                <option value="Animation">Animation</option>
+                <option value="Comedy">Comedy</option>
+                <option value="Crime">Crime</option>
+                <option value="Drama">Drama</option>
+                <option value="Fantasy">Fantasy</option>
+                <option value="Horror">Horror</option>
+                <option value="Romance">Romance</option>
+                <option value="Sci-Fi">Sci-Fi</option>
+                <option value="Thriller">Thriller</option>
+            </select>
+        </div>
+
+        <section id="movieList" class="movie-grid">
             </section>
-
-            <div id="movieList" class="movie-grid-layout"></div>
-
-        </div>
     </main>
 
-    <footer class="site-footer">
-        <div class="layout-container footer-inner">
-            
-            <div class="footer-brand-column">
-                <a href="index.html" class="brand-logo" aria-label="CineDiscover Home">
-                    <span class="logo-icon"></span>Movie<span class="logo-accent">Discover</span>
-                </a>
-                <p class="footer-tagline">
-                    Your ultimate digital catalog for exploring global cinema data, tracking trending releases, and discovering hidden gems.
-                </p>
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <h3>CineDiscover</h3>
+                <p>Curating mixed global cinema catalog channels for portfolio demonstration purposes.</p>
             </div>
-            
-            <div class="footer-links-column">
+            <div class="footer-links">
                 <h4>Explore More</h4>
-                <ul>
-                    <li><a href="index.html">Home Dashboard</a></li>
-                    <li><a href="trending.html">Trending Now</a></li>
-                    <li><a href="watchlist.html">Your Watchlist</a></li>
-                </ul>
+                <a href="index.html">Home Dashboard</a>
+                <a href="trending.html">Trending Now</a>
+                <a href="watchlist.html">Your Watchlist</a>
             </div>
-
-            <div class="footer-links-column">
-                <h4>Reach Out for Support</h4>
-                <ul>
-                    <li><a href="mailto:support@cinediscover.com">Contact Help Desk</a></li>
-                    <li><a href="mailto:api@cinediscover.com">Developer API Access</a></li>
-                    <li><a href="#">Report System Bug</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-links-column">
-                <h4>Legal Matrices</h4>
-                <ul>
-                    <li><a href="#">Terms of Service</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
-                    <li><a href="#">Cookie Preferences</a></li>
-                </ul>
+            <div class="footer-links">
+                <h4>Reach Out</h4>
+                <a href="#">Contact Help Desk</a>
+                <a href="#">Developer API Access</a>
+                <a href="#">Report System Bug</a>
             </div>
         </div>
-
-        <div class="footer-bottom-bar">
-            <div class="layout-container footer-bottom-inner">
-                <p>&copy; All rights reserved.</p>
-                <p class="attribution">
-                    Data systematically aggregated via community educational resources. Built under UI/UX Heuristic Standards.
-                </p>
-            </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 CineDiscover. All Rights Reserved.</p>
         </div>
     </footer>
 
