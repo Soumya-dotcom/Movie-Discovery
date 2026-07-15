@@ -327,25 +327,24 @@ loadMovieCatalog(currentPage);
 // This flag prevents multiple API requests from firing simultaneously if a user scrolls aggressively
 var isFetchingNextPage = false;
 
-window.addEventListener("scroll", async function() {
-    // We only trigger scroll fetching on the main dashboard index layout view
-    var currentPath = window.location.pathname.toLowerCase();
-    if (currentPath.includes("movie-details.html") || currentPath.includes("watchlist.html") || currentPath.includes("trending.html")) {
-        return; 
+// --- MANUALLY CONTROLLED PAGINATION HANDLING ---
+function loadNextPage() {
+    var btn = document.getElementById("loadMoreBtn");
+    if (btn) {
+        btn.textContent = "Loading next channel...";
+        btn.style.opacity = "0.7";
+        btn.disabled = true;
     }
 
-    // Calculate how far down the user has scrolled
-    var totalPageHeight = document.documentElement.scrollHeight;
-    var currentScrollPosition = window.innerHeight + window.scrollY;
-
-    // If the user is within 200 pixels of the absolute bottom, load the next page of 20 movies automatically
-    if ((currentScrollPosition >= totalPageHeight - 200) && !isFetchingNextPage) {
-        isFetchingNextPage = true; // Lock the thread
-        currentPage += 1;
-        
-        // Wait for the movie catalog to load the next page and append it to our global array
-        await loadMovieCatalog(currentPage, true);
-        
-        isFetchingNextPage = false; // Unlock the thread
-    }
-});
+    currentPage += 1;
+    
+    // Fetch the next 20 movies and append them safely to the bottom layout matrix
+    loadMovieCatalog(currentPage, true).then(function() {
+        // Reset the button state back to active once the network files are rendered
+        if (btn) {
+            btn.textContent = "Show More Movies";
+            btn.style.opacity = "1";
+            btn.disabled = false;
+        }
+    });
+}
