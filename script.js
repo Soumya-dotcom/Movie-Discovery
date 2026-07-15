@@ -1,11 +1,10 @@
-// --- NETWORK DATA HUB CONFIGURATION ---
 var movies = []; 
 var currentPage = 1;
 
-// TODO: Ensure your secure v3 key is pasted inside these quotes
+// TMDB API key
 const API_KEY = "fffa8cf32c1c5bb9cdfc864a1c48a7f7"; 
 
-// MODIFIED URL: Dynamically appends language queries to the network request pipeline
+// getting movies directly from tmdb API without manually entering 
 const getApiUrl = (page, langIso = "") => {
     let url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&sort_by=popularity.desc&vote_count.gte=50&page=${page}`;
     if (langIso && langIso !== "All") {
@@ -14,8 +13,10 @@ const getApiUrl = (page, langIso = "") => {
     return url;
 };
 
+// TMDB stores images separately on their CDN, so we prefix this base path to load the poster images
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
+// TMDB returns genre data as numbers (IDs). We map those IDs to readable names here.
 const GENRE_MAP = {
     28: "Action", 12: "Adventure", 16: "Animation", 35: "Comedy", 80: "Crime",
     99: "Documentary", 18: "Drama", 10751: "Family", 14: "Fantasy", 36: "History",
@@ -23,7 +24,9 @@ const GENRE_MAP = {
     10770: "TV Movie", 53: "Thriller", 10752: "War", 37: "Western"
 };
 
-// GLOBAL RETRIEVAL HANDSHAKE ENGINE
+// The main engine that talks to the live TMDB database
+
+// 'appendData' is true when clicking "Show More" so we don't wipe out the movies we already loaded.
 async function loadMovieCatalog(pageNumber = 1, appendData = false) {
     var movieListContainer = document.getElementById("movieList");
     if (!movieListContainer) return; 
@@ -31,11 +34,12 @@ async function loadMovieCatalog(pageNumber = 1, appendData = false) {
     var languageSelect = document.getElementById("languageSelect");
     var activeLang = languageSelect ? languageSelect.value : "All";
 
+    // Show a clean loading animation to let the user know the network is processing
     if (!appendData) {
         movieListContainer.innerHTML = `
             <div style="grid-column: 1/-1; text-align: center; padding: 60px 0; color: var(--text-muted);">
                 <div style="border: 4px solid rgba(255,255,255,0.1); border-left-color: var(--brand-accent); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px auto;"></div>
-                <p>Curating global cinema catalog channels...</p>
+                <p>Loading...</p>
             </div>
         `;
     }
@@ -46,6 +50,8 @@ async function loadMovieCatalog(pageNumber = 1, appendData = false) {
         
         var data = await response.json();
         
+
+        // Take the raw payload from TMDB and clean it up into a structure our app likes
         var fetchedMovies = data.results.map(function(item) {
             return {
                 title: item.title,
@@ -57,36 +63,43 @@ async function loadMovieCatalog(pageNumber = 1, appendData = false) {
                 description: item.overview
             };
         });
+        
 
+        // Add new movies to the existing array if paginating, otherwise set it fresh
         if (appendData) {
             movies = movies.concat(fetchedMovies);
         } else {
             movies = fetchedMovies;
         }
 
+        // Send our sorted data to the page router to paint the layout
         initializeRouting();
 
     } catch (error) {
+        // Safe fallback view if the user has a bad internet connection or a broken API token
         if(!appendData) {
             movieListContainer.innerHTML = `
                 <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--brand-red);">
-                    <h3>⚠️ Global Archive Retrieval Fault</h3>
-                    <p>Unable to connect securely to TMDB streaming endpoints. Verify your token setup.</p>
+                    <h3>ERROR</h3>
+                    <p>Unable to connect securely..</p>
                 </div>
             `;
         }
     }
 }
 
+// Increments our page tracking number and pulls the next batch of 20 movies from the server
 function loadNextPage() {
     currentPage += 1;
     loadMovieCatalog(currentPage, true);
 }
 
+// Checks which HTML file the user is currently looking at so we display the correct data rules
 function initializeRouting() {
     var currentPath = window.location.pathname.toLowerCase();
 
     if (currentPath.includes("trending.html")) {
+        // Filters only movies rated 7.5 or higher and sorts them highest to lowest
         var trendingMovies = movies.filter(function(m) { return m.rating >= 7.5; });
         trendingMovies.sort(function(a, b) { return b.rating - a.rating; });
         showMovies(trendingMovies);
@@ -95,6 +108,7 @@ function initializeRouting() {
     } else if (currentPath.includes("watchlist.html")) {
         if (typeof renderWatchlist === 'function') renderWatchlist();
     } else {
+        // Default to the dashboard home logic and look at filter selections
         filterMovies(); 
     }
 }
@@ -105,11 +119,12 @@ function showMovies(movieArray) {
     
     movieList.innerHTML = "";
 
+    // Empty state safeguard if the user applies search criteria that yields nothing
     if (movieArray.length === 0) {
         movieList.innerHTML = `
             <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">
-                <h3>No movies match your current parameters.</h3>
-                <p>Try resetting search filters or changing terms.</p>
+                <h3>No matches Found</h3>
+                <p>Reset your preferences</p>
             </div>
         `;
         return;
@@ -136,6 +151,7 @@ function showMovies(movieArray) {
     });
 }
 
+// When a user clicks a movie card, we isolate that specific movie index and cache it in the browser's memory
 function saveActiveMovieByIndex(index) {
     if (window.currentRenderedMovies && window.currentRenderedMovies[index]) {
         var selectedMovie = window.currentRenderedMovies[index];
@@ -143,7 +159,7 @@ function saveActiveMovieByIndex(index) {
     }
 }
 
-// LIVE MULTI-FILTER LISTENER ASSIGNMENTS
+
 var searchBox = document.getElementById("searchBox");
 var genreSelect = document.getElementById("genreSelect");
 var languageSelect = document.getElementById("languageSelect"); 
@@ -151,10 +167,10 @@ var languageSelect = document.getElementById("languageSelect");
 if (searchBox) searchBox.addEventListener("input", filterMovies);
 if (genreSelect) genreSelect.addEventListener("change", filterMovies);
 
-// NEW ELEMENT LOGIC: Swapping languages completely triggers a fresh, targeted API call
+
 if (languageSelect) {
     languageSelect.addEventListener("change", function() {
-        currentPage = 1; // Reset pagination page count
+        currentPage = 1; 
         loadMovieCatalog(currentPage, false);
     });
 }
@@ -177,7 +193,7 @@ function filterMovies() {
     showMovies(results);
 }
 
-// --- DETAILS PAGE ENGINE RENDERING ---
+// Reads the clicked movie profile data out of memory cache and generates the entire custom layout layout view on the details page
 function renderMovieDetails() {
     var wrapper = document.getElementById("movieDetailsWrapper");
     if (!wrapper) return;
@@ -186,8 +202,8 @@ function renderMovieDetails() {
     if (!rawData) {
         wrapper.innerHTML = `
             <div style="text-align: center; color: var(--brand-red); padding: 40px;">
-                <h2>⚠️ Context Missing</h2>
-                <p>No movie context selected. Please return home and select a profile card.</p>
+                <h2>Context Missing</h2>
+                <p>No movie context selected.Return to home</p>
                 <a href="index.html" class="btn btn-primary" style="margin-top:20px;">Go Home</a>
             </div>
         `;
@@ -198,6 +214,7 @@ function renderMovieDetails() {
     var currentWatchlist = JSON.parse(localStorage.getItem('userWatchlist')) || [];
     var isSaved = currentWatchlist.some(function(item) { return item.title === movie.title; });
     
+    // Updates UI button state visually based on whether the item is inside the watchlist array or not
     var btnText = isSaved ? "Remove from Watchlist" : "Add to Watchlist";
     var btnClass = isSaved ? "btn btn-danger" : "btn btn-primary";
 
@@ -221,6 +238,8 @@ function renderMovieDetails() {
     `;
 }
 
+
+// Toggles the movie inside our local persistent array when the user clicks the watchlist tracking button
 function toggleWatchlist() {
     var rawData = localStorage.getItem('activeMovieContext');
     if (!rawData) return;
@@ -231,16 +250,18 @@ function toggleWatchlist() {
     var btn = document.getElementById("watchlistBtn");
 
     if (existingIndex > -1) {
+        // Movie is already there then remove it 
         currentWatchlist.splice(existingIndex, 1);
         if(btn) { btn.textContent = "Add to Watchlist"; btn.className = "btn btn-primary"; }
     } else {
+        // Movie is new to the list, then add it
         currentWatchlist.push(movie);
         if(btn) { btn.textContent = "Remove from Watchlist"; btn.className = "btn btn-danger"; }
     }
     localStorage.setItem('userWatchlist', JSON.stringify(currentWatchlist));
 }
 
-// --- WATCHLIST LAYOUT ARCHITECTURE ---
+
 function renderWatchlist() {
     var watchlistGrid = document.getElementById("watchlistGrid");
     if (!watchlistGrid) return;
@@ -299,5 +320,5 @@ function removeFromWatchlistByIndex(index) {
     renderWatchlist();
 }
 
-// Run initial server fetch execution
+// Run 
 loadMovieCatalog(currentPage);
