@@ -3,7 +3,7 @@ var movies = [];
 var currentPage = 1;
 
 // TODO: Paste your secure v3 text key right inside the empty string quotes below
-const API_KEY = "YOUR_ACTUAL_TMDB_API_KEY_HERE"; 
+const API_KEY = "fffa8cf32c1c5bb9cdfc864a1c48a7f7"; 
 
 // This helper function pieces together our API request URL dynamically. 
 // If a user selects a specific language, we tell TMDB to target that specific international library.
