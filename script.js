@@ -299,7 +299,7 @@ function toggleWatchlist() {
     localStorage.setItem('userWatchlist', JSON.stringify(currentWatchlist));
 }
 
-// Pulls down the saved items array from local browser storage and displays them in a neat collection view grid
+l// Pulls down the saved items array from local browser storage and displays them in a neat collection view grid
 function renderWatchlist() {
     var watchlistGrid = document.getElementById("watchlistGrid");
     if (!watchlistGrid) return;
@@ -307,18 +307,19 @@ function renderWatchlist() {
     var currentWatchlist = JSON.parse(localStorage.getItem('userWatchlist')) || [];
     watchlistGrid.innerHTML = "";
 
-    // CRITICAL EMPTY STATE FIX: Inform the user cleanly if their saved collection is completely empty
+    // If the storage array is completely empty, paint the golden-bordered notification card
     if (currentWatchlist.length === 0) {
         watchlistGrid.innerHTML = `
-            <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; background: var(--bg-card); border-radius: 16px; border: 1px dashed rgba(229,184,66,0.2); max-width: 600px; margin: 40px auto;">
-                <h3 style="color: var(--brand-gold); font-size: 1.4rem; margin-bottom: 10px;">Your Watchlist is Empty</h3>
-                <p style="color: var(--text-muted); margin-bottom: 25px; font-size: 0.95rem;">You haven't bookmarked any global cinema profiles yet. Browse the home dashboard catalog channels to add titles.</p>
+            <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; background: var(--bg-card); border-radius: 16px; border: 1px dashed rgba(229,184,66,0.25); max-width: 600px; margin: 40px auto; box-shadow: 0 8px 32px rgba(0,0,0,0.4);">
+                <h3 style="color: var(--brand-gold); font-size: 1.4rem; margin-bottom: 12px; font-weight: 700;">No Movies in Watchlist</h3>
+                <p style="color: var(--text-muted); margin-bottom: 25px; font-size: 0.95rem; line-height: 1.6;">You haven't bookmarked any global cinema profiles yet. Browse the home dashboard catalog channels to add titles.</p>
                 <a href="index.html" class="btn btn-primary">Browse Movies</a>
             </div>
         `;
         return;
     }
 
+    // Otherwise, loop and print card outputs
     for (var i = 0; i < currentWatchlist.length; i++) {
         var movie = currentWatchlist[i];
         
@@ -338,18 +339,9 @@ function renderWatchlist() {
             </div>
         `;
         
-        // Maps click logic indexes safely to our specific watchlist arrays components
         var cardNode = watchlistGrid.lastElementChild;
         cardNode.querySelector("a").setAttribute("onclick", `saveActiveWatchlistMovie(${i})`);
         cardNode.querySelector("button").setAttribute("onclick", `removeFromWatchlistByIndex(${i})`);
-    }
-}
-
-// Caches the active movie clicked inside the watchlist view so it can be unpacked by the details engine portal
-function saveActiveWatchlistMovie(index) {
-    var currentWatchlist = JSON.parse(localStorage.getItem('userWatchlist')) || [];
-    if(currentWatchlist[index]) {
-        localStorage.setItem('activeMovieContext', JSON.stringify(currentWatchlist[index]));
     }
 }
 
