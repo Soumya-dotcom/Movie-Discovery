@@ -3,7 +3,7 @@ var movies = [];
 var currentPage = 1;
 
 // TODO: Paste your secure v3 text key right inside the empty string quotes below
-const API_KEY = "YOUR_ACTUAL_TMDB_API_KEY_HERE"; 
+const API_KEY = "fffa8cf32c1c5bb9cdfc864a1c48a7f7"; 
 // Modified URL: Removed the language restriction token to get all global languages
 const getApiUrl = (page) => `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&sort_by=popularity.desc&vote_count.gte=100&page=${page}`;
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
