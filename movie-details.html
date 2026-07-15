@@ -3,70 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movie Details-MovieDiscover</title>
-    <link rel="stylesheet" href="./style.css">
+    <title>Movie Profile Details - CineDiscover</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <nav class="navbar">
         <div class="nav-container">
-            <a href="index.html" class="logo">MovieDiscover</a>
-            <ul class="nav-links">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="trending.html">Trending</a></li>
-                <li><a href="watchlist.html">Watchlist</a></li>
-            </ul>
+            <a href="index.html" class="logo">CineDiscover</a>
         </div>
     </nav>
 
     <main class="details-container">
-    <div style="margin-bottom: 20px;">
-        <a href="index.html" class="back-link" style="color: var(--brand-accent); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
-            &#8592; Back to Dashboard
-        </a>
-    </div>
+        
+        <div style="margin: 20px 0;">
+            <a href="index.html" class="back-link" style="color: var(--brand-gold); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: color 0.2s ease;">
+                &#8592; Back to Dashboard
+            </a>
+        </div>
 
-    <div id="movieDetailsWrapper" class="details-content">
-        <div style="text-align: center; color: var(--text-muted); padding: 60px 0;">
-            <p>Synchronizing movie data ...</p>
+        <div id="movieDetailsWrapper" class="details-content">
+            <div style="text-align: center; color: var(--text-muted); padding: 60px 0;">
+                <p>Synchronizing movie data assets...</p>
+            </div>
         </div>
-    </div>
-</main>
-    
-    
-   <footer class="footer">
-    <div class="footer-container">
-        <div class="footer-brand">
-            <h3>MovieDiscover</h3>
-            <p>Your ultimate digital portal for tracking trending cinema profiles, discovering global masterpieces, and curating your personal movie archive watchlists.</p>
-        </div>
-        <div class="footer-links">
-            <h4>Navigation</h4>
-            <a href="index.html">Home Dashboard</a>
-            <a href="trending.html">Trending</a>
-            <a href="watchlist.html">My Watchlist</a>
-        </div>
-        <div class="footer-links">
-            <h4>Legal Matrices</h4>
-            <a href="#">Terms of Use</a>
-            <a href="#">Privacy Policy</a>
-            <a href="#">Cookie Preferences</a>
-        </div>
-        <div class="footer-links">
-            <h4>Support Hub</h4>
-            <a href="#">Developer API</a>
-            <a href="#">Help Desk Portal</a>
-            <a href="#">Report System</a>
-        </div>
-    </div>
-</footer>
+    </main>
 
-    <script src="./script.js"></script>
-    <script>
-        // Trigger rendering context on load
-        if (typeof renderMovieDetails === 'function') {
-            renderMovieDetails();
-        }
-    </script>
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <h3>CineDiscover</h3>
+                <p>Your ultimate digital portal for tracking trending cinema profiles, discovering global masterpieces, and curating your personal movie archive watchlists.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Navigation</h4>
+                <a href="index.html">Home Dashboard</a>
+                <a href="trending.html">Trending Feed</a>
+                <a href="watchlist.html">My Watchlist</a>
+            </div>
+            <div class="footer-links">
+                <h4>Legal Matrices</h4>
+                <a href="#">Terms of Use</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Cookie Preferences</a>
+            </div>
+            <div class="footer-links">
+                <h4>Support Hub</h4>
+                <a href="#">Developer API</a>
+                <a href="#">Help Desk Portal</a>
+                <a href="#">System Bug Status</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 CineDiscover. Built for portfolio presentation purposes.</p>
+            <div class="footer-socials">
+                <a href="#">Twitter</a>
+                <a href="#">Instagram</a>
+                <a href="#">GitHub</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>
