@@ -27,6 +27,15 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
+/* --- EXPANDED CONTAINER WIDTHS (Reduces Left/Right Blank Spaces) --- */
+.container, .nav-container, .details-container, .footer-container {
+    max-width: 95%;      /* Increased footprint scaling to utilize broad widescreen real estate */
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 30px;
+    flex: 1;
+}
+
 /* --- THEME NAVIGATION NAVBAR --- */
 .navbar {
     background-color: rgba(17, 22, 29, 0.95);
@@ -40,27 +49,20 @@ body {
     align-items: center;
 }
 
-.nav-container {
-    max-width: 1240px;
-    width: 100%;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 20px;
-}
-
-/* Logo updated to Premium Brand Gold */
+/* Logo updated to Premium Brand Gold with Illumination Glow Matrix */
 .logo {
     color: var(--brand-gold);
-    font-size: 1.7rem;
+    font-size: 1.8rem;
     font-weight: 800;
     text-decoration: none;
     letter-spacing: -0.5px;
-    transition: color 0.3s ease;
+    text-shadow: 0 0 10px rgba(229, 184, 66, 0.3), 0 0 20px rgba(229, 184, 66, 0.1);
+    transition: all 0.3s ease;
 }
+
 .logo:hover {
     color: var(--brand-gold-hover);
+    text-shadow: 0 0 15px rgba(252, 211, 106, 0.6), 0 0 30px rgba(229, 184, 66, 0.3);
 }
 
 .nav-links {
@@ -104,35 +106,29 @@ body {
     color: var(--brand-gold);
 }
 
-/* --- DYNAMIC HEADER ZONE --- */
+/* --- CENTERED HEADER ZONE WITH NEON TYPOGRAPHY GLOW --- */
 .page-header {
     text-align: center;      /* Centers the Header */
-    margin: 40px auto 35px auto;
-    max-width: 700px;
+    margin: 45px auto 40px auto;
+    max-width: 800px;
 }
 
-/* Header Text elements transformed to center gold themes */
+/* Header Text elements transformed to centered high-density gold themes */
 .page-header h2 {
-    font-size: 2.5rem;
+    font-size: 2.8rem;
     font-weight: 800;
     color: var(--brand-gold);
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     letter-spacing: -0.5px;
+    text-shadow: 0 0 12px rgba(229, 184, 66, 0.4), 
+                 0 0 24px rgba(229, 184, 66, 0.2),
+                 0 0 40px rgba(229, 184, 66, 0.1);
 }
 
 .page-header p {
     color: var(--text-muted);
-    font-size: 1.05rem;
-    line-height: 1.5;
-}
-
-/* --- FLUID CONTENT MATRIX ARCHITECTURE --- */
-.container {
-    max-width: 1240px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 0 20px;
-    flex: 1;
+    font-size: 1.1rem;
+    line-height: 1.6;
 }
 
 /* --- ATTRACTIVE CONTROLS & DROPDOWN ENGINE --- */
@@ -209,11 +205,12 @@ body {
     box-shadow: 0 0 0 3px rgba(229, 184, 66, 0.15);
 }
 
-/* --- MOVIE GRID DISPLAY SYSTEMS --- */
+/* --- DYNAMIC MOVIE GRID DISPLAY SYSTEMS --- */
 .movie-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 16px;
+    /* Fits even more micro cards per row now that screen side gutters are minimized */
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 18px;
 }
 
 .movie-card {
@@ -266,14 +263,6 @@ body {
 }
 
 /* --- DETAILS MATRIX LAYOUT PORTALS --- */
-.details-container {
-    max-width: 1240px;
-    width: 100%;
-    margin: 30px auto;
-    padding: 0 20px;
-    flex: 1;
-}
-
 .details-grid {
     display: grid;
     grid-template-columns: 1fr 2fr;
@@ -336,12 +325,11 @@ body {
     border-radius: 8px;
     border: none;
     cursor: pointer;
-    transition: all 0.2s standard;
+    transition: all 0.2s ease;
     text-align: center;
     text-decoration: none;
 }
 
-/* Buttons changed to match golden accent default settings */
 .btn-primary {
     background: var(--brand-gold);
     color: #080a0c;
@@ -376,15 +364,6 @@ body {
     border-top: 1px solid rgba(229, 184, 66, 0.15);
     padding: 60px 0 30px 0;
     margin-top: 80px;
-}
-
-.footer-container {
-    max-width: 1240px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
-    gap: 40px;
-    padding: 0 20px;
 }
 
 .footer-brand h3 {
@@ -431,9 +410,8 @@ body {
 }
 
 .footer-bottom {
-    max-width: 1240px;
-    margin: 50px auto 0 auto;
-    padding: 25px 20px 0 20px;
+    margin-top: 50px;
+    padding: 25px 0 0 0;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
     display: flex;
     justify-content: space-between;
@@ -486,9 +464,9 @@ body {
     }
 }
 
-/* Makes the initial hidden placeholder option appear muted like the search input hint */
+/* Corrected placeholder option visibility state context matching */
 select:invalid,
 select option[disabled] {
     color: var(--text-muted);
-    opacity: 0.02;
+    opacity: 0.7; /* Restored opacity visibility layout scaling */
 }
