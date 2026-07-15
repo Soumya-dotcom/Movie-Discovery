@@ -94,13 +94,15 @@ function showMovies(movieArray) {
         return;
     }
 
-    // Using .forEach explicitly binds the 'movie' object context to each card correctly
-    movieArray.forEach(function(movie) {
-        var starText = "\u2605".repeat(Math.round(movie.rating / 2));
-        var safePayload = encodeURIComponent(JSON.stringify(movie));
+    // Keep a global reference of the filtered array so the index lookup works flawlessly
+    window.currentRenderedMovies = movieArray;
 
+    movieArray.forEach(function(movie, index) {
+        var starText = "\u2605".repeat(Math.round(movie.rating / 2));
+
+        // We pass ONLY the simple index number to the click handler to avoid quote breaks
         movieList.innerHTML += `
-            <a href="movie-details.html" onclick="saveActiveMovie('${safePayload}')" class="movie-card" aria-label="View Info for ${movie.title}">
+            <a href="movie-details.html" onclick="saveActiveMovieByIndex(${index})" class="movie-card" aria-label="View Info for ${movie.title}">
                 <img class="poster" src="${movie.poster}" alt="${movie.title} poster image">
                 <div class="card-info">
                     <h3>${movie.title}</h3>
@@ -112,6 +114,13 @@ function showMovies(movieArray) {
     });
 }
 
+function saveActiveMovieByIndex(index) {
+    // Look up the exact movie object from our secure reference array using the index number
+    if (window.currentRenderedMovies && window.currentRenderedMovies[index]) {
+        var selectedMovie = window.currentRenderedMovies[index];
+        localStorage.setItem('activeMovieContext', JSON.stringify(selectedMovie));
+    }
+}
 function saveActiveMovie(movieDataJson) {
     localStorage.setItem('activeMovieContext', decodeURIComponent(movieDataJson));
 }
