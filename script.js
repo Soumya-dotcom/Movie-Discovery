@@ -123,8 +123,20 @@ function initializeRouting() {
     var currentPath = window.location.pathname.toLowerCase();
 
     if (currentPath.includes("trending.html")) {
-        // TRENDING OVERRIDE: Clear language parameters to look up globally top-rated movies
-        var trendingMovies = movies.filter(function(m) { return m.rating >= 7.0; });
+        // Look up if the user has a preferred language saved in memory cache
+        var savedLanguage = localStorage.getItem('userSelectedLanguage') || "All";
+        
+        var trendingMovies = movies;
+        
+        // If they chose a specific language (like HI), filter down to make sure only high-rated films from that language show
+        if (savedLanguage !== "All") {
+            trendingMovies = movies.filter(function(m) {
+                return m.language === savedLanguage.toUpperCase();
+            });
+        }
+        
+        // Sort remaining files by highest rating down to lowest
+        trendingMovies = trendingMovies.filter(function(m) { return m.rating >= 6.5; });
         trendingMovies.sort(function(a, b) { return b.rating - a.rating; });
         showMovies(trendingMovies);
     } else if (currentPath.includes("movie-details.html")) {
