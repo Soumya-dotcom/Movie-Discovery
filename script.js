@@ -174,7 +174,8 @@ function showMovies(movieArray) {
                 </a>
                 
                 <div class="card-footer-metrics">
-                    <span class="stars">${starText} (${movie.rating.toFixed(1)}/10)</span>
+                    
+                    <span class="stars">${starText} (${movie.rating.toFixed(1)})</span>
                     
                     <button class="quick-bookmark-btn ${activeClass}" onclick="handleQuickBookmark(event, ${index})" aria-label="Save to watchlist">
                         <svg viewBox="0 0 24 24">
@@ -298,7 +299,8 @@ function renderMovieDetails() {
                     <span class="tag">${movie.genre.join(", ")}</span>
                 </div>
                 
-                <p class="rating-display">★ Rating: <strong>${movie.rating.toFixed(1)} / 10</strong></p>
+                
+                <p class="rating-display">★ Rating: <strong>${movie.rating.toFixed(1)}</strong></p>
                 
                 <h3 style="margin-bottom:10px;">Overview</h3>
                 <p class="overview-text">${movie.description}</p>
