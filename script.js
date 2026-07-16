@@ -277,6 +277,10 @@ function renderMovieDetails() {
     }
 
     var movie = JSON.parse(rawData);
+    
+    // FIXED RATING MATH: Convert 10-point scale to match our clean 5-star dashboard format
+    var detailsRatingOutOfFive = movie.rating / 2;
+    
     var currentWatchlist = JSON.parse(localStorage.getItem('userWatchlist')) || [];
     var isSaved = currentWatchlist.some(function(item) { return item.title === movie.title; });
     
@@ -294,7 +298,9 @@ function renderMovieDetails() {
                     <span class="tag">Language: ${movie.language}</span>
                     <span class="tag">${movie.genre.join(", ")}</span>
                 </div>
-                <p class="rating-display">★ Rating: <strong>${movie.rating.toFixed(1)} / 10</strong></p>
+                
+                <p class="rating-display">★ Rating: <strong>${detailsRatingOutOfFive.toFixed(1)} / 5.0</strong></p>
+                
                 <h3 style="margin-bottom:10px;">Overview</h3>
                 <p class="overview-text">${movie.description}</p>
                 <button onclick="toggleWatchlist()" id="watchlistBtn" class="${btnClass}">${btnText}</button>
