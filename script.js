@@ -134,7 +134,7 @@ function renderTrendingList() {
     showMovies(trendingMovies);
 }
 
-// Loops through our movie array and appends card blocks with quick-bookmark icon overlays
+// Loops through our movie array and renders cards with inline bottom-right bookmarks and 5-star ratings
 function showMovies(movieArray) {
     var movieList = document.getElementById("movieList");
     if (!movieList) return; 
@@ -155,26 +155,31 @@ function showMovies(movieArray) {
     var currentWatchlist = JSON.parse(localStorage.getItem('userWatchlist')) || [];
 
     movieArray.forEach(function(movie, index) {
-        var starText = "\u2605".repeat(Math.round(movie.rating / 2));
+        // SCALING FIX: Convert TMDB 10-point scale to a clean 5-star metric
+        var ratingOutOfFive = movie.rating / 2;
+        var starText = "\u2605".repeat(Math.round(ratingOutOfFive));
         
-        // Check if this specific movie already lives in your watchlist array
         var isBookmarked = currentWatchlist.some(function(item) { return item.title === movie.title; });
         var activeClass = isBookmarked ? "saved" : "";
 
         movieList.innerHTML += `
             <div class="movie-card" style="position: relative;">
-                <button class="quick-bookmark-btn ${activeClass}" onclick="handleQuickBookmark(event, ${index})" aria-label="Quick save to watchlist">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
-                    </svg>
-                </button>
-
                 <a href="movie-details.html" style="text-decoration: none; color: inherit; display: block;" onclick="saveActiveMovieByIndex(${index})">
                     <img class="poster" src="${movie.poster}" alt="${movie.title} poster image">
+                    
                     <div class="card-info">
                         <h3>${movie.title}</h3>
                         <p>Year: ${movie.year} | Language: <strong>${movie.language}</strong></p>
-                        <p class="stars">${starText} (${movie.rating.toFixed(1)})</p>
+                        
+                        <div class="card-footer-metrics">
+                            <span class="stars">${starText} (${ratingOutOfFive.toFixed(1)}/5)</span>
+                            
+                            <button class="quick-bookmark-btn ${activeClass}" onclick="handleQuickBookmark(event, ${index})" aria-label="Save to watchlist">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </a>
             </div>

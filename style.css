@@ -477,41 +477,41 @@ select:invalid, select option[disabled] {
     opacity: 0.7; 
 }
 
-/* --- GRID CARD QUICK-ACTION BOOKMARKS --- */
-.movie-card {
-    position: relative; /* Crucial to keep the bookmark absolute anchor inside the card bounds */
+/* --- GRID CARD QUICK-ACTION BOOKMARKS & ALIGNMENTS --- */
+.card-footer-metrics {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto; /* Pushes the metric bar to the bottom of the text zone */
+    padding-top: 8px;
+    width: 100%;
 }
 
 .quick-bookmark-btn {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%; /* Oval capsule uniformity */
-    background: rgba(17, 22, 29, 0.8);
-    backdrop-filter: blur(8px);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    z-index: 10; /* Forces icon above the anchor card link click layers */
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .quick-bookmark-btn svg {
-    width: 16px;
-    height: 16px;
+    width: 13px;
+    height: 13px;
     fill: transparent;
     stroke: var(--text-muted);
-    stroke-width: 2;
+    stroke-width: 2.5;
     transition: all 0.2s ease;
 }
 
 .quick-bookmark-btn:hover {
     transform: scale(1.1);
-    background: rgba(17, 22, 29, 0.95);
+    background: rgba(26, 33, 42, 0.6);
     border-color: var(--brand-gold);
 }
 
@@ -519,7 +519,7 @@ select:invalid, select option[disabled] {
     stroke: var(--brand-gold-hover);
 }
 
-/* Active Saved Visual States */
+/* Active Highlight Saved States */
 .quick-bookmark-btn.saved svg {
     fill: var(--brand-gold);
     stroke: var(--brand-gold);
