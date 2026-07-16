@@ -134,7 +134,7 @@ function renderTrendingList() {
     showMovies(trendingMovies);
 }
 
-// Loops through our movie array and renders cards with isolated bottom-right bookmarks and 5-star ratings
+// Loops through our movie array and renders genuine TMDB ratings out of 10 with a scaled 5-star visual system
 function showMovies(movieArray) {
     var movieList = document.getElementById("movieList");
     if (!movieList) return; 
@@ -155,27 +155,26 @@ function showMovies(movieArray) {
     var currentWatchlist = JSON.parse(localStorage.getItem('userWatchlist')) || [];
 
     movieArray.forEach(function(movie, index) {
-        var ratingOutOfFive = movie.rating / 2;
-        var starText = "\u2605".repeat(Math.round(ratingOutOfFive));
+        // Visual indicator math: 7.8 out of 10 becomes 3.9, rounds up to 4 stars drawn on screen
+        var visualStarCount = Math.round(movie.rating / 2);
+        var starText = "\u2605".repeat(visualStarCount);
         
         var isBookmarked = currentWatchlist.some(function(item) { return item.title === movie.title; });
         var activeClass = isBookmarked ? "saved" : "";
 
         movieList.innerHTML += `
             <div class="movie-card" style="position: relative;">
-                <!-- Link wrapper ONLY covers the image and main information space -->
                 <a href="movie-details.html" style="text-decoration: none; color: inherit; display: block;" onclick="saveActiveMovieByIndex(${index})">
                     <img class="poster" src="${movie.poster}" alt="${movie.title} poster image">
                     
-                    <div class="card-info" style="padding-bottom: 50px;"> <!-- Extra padding-bottom reserves space for metrics row -->
+                    <div class="card-info" style="padding-bottom: 50px;">
                         <h3>${movie.title}</h3>
                         <p>Year: ${movie.year} | Language: <strong>${movie.language}</strong></p>
                     </div>
                 </a>
                 
-                <!-- FIXED STRUCTURE: Placed completely OUTSIDE the anchor link to prevent re-routing pages -->
                 <div class="card-footer-metrics">
-                    <span class="stars">${starText} (${Math.round(ratingOutOfFive)}/5)</span>
+                    <span class="stars">${starText} (${movie.rating.toFixed(1)}/10)</span>
                     
                     <button class="quick-bookmark-btn ${activeClass}" onclick="handleQuickBookmark(event, ${index})" aria-label="Save to watchlist">
                         <svg viewBox="0 0 24 24">
@@ -299,8 +298,8 @@ function renderMovieDetails() {
                     <span class="tag">${movie.genre.join(", ")}</span>
                 </div>
                 
-                // Change this line inside the renderMovieDetails function:
-<p class="rating-display">★ Rating: <strong>${Math.round(detailsRatingOutOfFive)} / 5</strong></p>
+                // Locate this line inside the renderMovieDetails wrapper template block and replace it:
+                <p class="rating-display">★ Rating: <strong>${movie.rating.toFixed(1)} / 10</strong></p>
                 
                 <h3 style="margin-bottom:10px;">Overview</h3>
                 <p class="overview-text">${movie.description}</p>
