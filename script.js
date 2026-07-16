@@ -134,7 +134,7 @@ function renderTrendingList() {
     showMovies(trendingMovies);
 }
 
-// Loops through our finalized movie array and appends individual HTML card code blocks to the grid
+// Loops through our movie array and appends card blocks with quick-bookmark icon overlays
 function showMovies(movieArray) {
     var movieList = document.getElementById("movieList");
     if (!movieList) return; 
@@ -152,25 +152,63 @@ function showMovies(movieArray) {
     }
 
     window.currentRenderedMovies = movieArray;
+    var currentWatchlist = JSON.parse(localStorage.getItem('userWatchlist')) || [];
 
     movieArray.forEach(function(movie, index) {
         var starText = "\u2605".repeat(Math.round(movie.rating / 2));
+        
+        // Check if this specific movie already lives in your watchlist array
+        var isBookmarked = currentWatchlist.some(function(item) { return item.title === movie.title; });
+        var activeClass = isBookmarked ? "saved" : "";
 
         movieList.innerHTML += `
-            <a href="movie-details.html" class="movie-card" aria-label="View Info for ${movie.title}">
-                <img class="poster" src="${movie.poster}" alt="${movie.title} poster image">
-                <div class="card-info">
-                    <h3>${movie.title}</h3>
-                    <p>Year: ${movie.year} | Language: <strong>${movie.language}</strong></p>
-                    <p class="stars">${starText} (${movie.rating.toFixed(1)})</p>
-                </div>
-            </a>
+            <div class="movie-card" style="position: relative;">
+                <button class="quick-bookmark-btn ${activeClass}" onclick="handleQuickBookmark(event, ${index})" aria-label="Quick save to watchlist">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                </button>
+
+                <a href="movie-details.html" style="text-decoration: none; color: inherit; display: block;" onclick="saveActiveMovieByIndex(${index})">
+                    <img class="poster" src="${movie.poster}" alt="${movie.title} poster image">
+                    <div class="card-info">
+                        <h3>${movie.title}</h3>
+                        <p>Year: ${movie.year} | Language: <strong>${movie.language}</strong></p>
+                        <p class="stars">${starText} (${movie.rating.toFixed(1)})</p>
+                    </div>
+                </a>
+            </div>
         `;
-        
-        var node = movieList.lastElementChild;
-        node.setAttribute("onclick", `saveActiveMovieByIndex(${index})`);
     });
 }
+
+// Intercepts the grid card actions to handle fast watchlist saves without page re-routing
+function handleQuickBookmark(event, index) {
+    event.stopPropagation(); // Stops the anchor click from firing and opening the details view
+    
+    if (!window.currentRenderedMovies || !window.currentRenderedMovies[index]) return;
+    var movie = window.currentRenderedMovies[index];
+    
+    var currentWatchlist = JSON.parse(localStorage.getItem('userWatchlist')) || [];
+    var existingIndex = currentWatchlist.findIndex(function(item) { return item.title === movie.title; });
+    
+    // Target the specific button element that was clicked
+    var btn = event.currentTarget;
+
+    if (existingIndex > -1) {
+        // Remove from list
+        currentWatchlist.splice(existingIndex, 1);
+        btn.classList.remove("saved");
+    } else {
+        // Add to list
+        currentWatchlist.push(movie);
+        btn.classList.add("saved");
+    }
+    
+    localStorage.setItem('userWatchlist', JSON.stringify(currentWatchlist));
+}
+        
+        
 
 // When a user clicks a movie card, we isolate that specific movie index and cache it in the browser's memory
 function saveActiveMovieByIndex(index) {
