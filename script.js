@@ -134,7 +134,7 @@ function renderTrendingList() {
     showMovies(trendingMovies);
 }
 
-// Loops through our movie array and renders cards with inline bottom-right bookmarks and 5-star ratings
+// Loops through our movie array and renders cards with isolated bottom-right bookmarks and 5-star ratings
 function showMovies(movieArray) {
     var movieList = document.getElementById("movieList");
     if (!movieList) return; 
@@ -155,7 +155,6 @@ function showMovies(movieArray) {
     var currentWatchlist = JSON.parse(localStorage.getItem('userWatchlist')) || [];
 
     movieArray.forEach(function(movie, index) {
-        // SCALING FIX: Convert TMDB 10-point scale to a clean 5-star metric
         var ratingOutOfFive = movie.rating / 2;
         var starText = "\u2605".repeat(Math.round(ratingOutOfFive));
         
@@ -164,24 +163,26 @@ function showMovies(movieArray) {
 
         movieList.innerHTML += `
             <div class="movie-card" style="position: relative;">
+                <!-- Link wrapper ONLY covers the image and main information space -->
                 <a href="movie-details.html" style="text-decoration: none; color: inherit; display: block;" onclick="saveActiveMovieByIndex(${index})">
                     <img class="poster" src="${movie.poster}" alt="${movie.title} poster image">
                     
-                    <div class="card-info">
+                    <div class="card-info" style="padding-bottom: 50px;"> <!-- Extra padding-bottom reserves space for metrics row -->
                         <h3>${movie.title}</h3>
                         <p>Year: ${movie.year} | Language: <strong>${movie.language}</strong></p>
-                        
-                        <div class="card-footer-metrics">
-                            <span class="stars">${starText} (${ratingOutOfFive.toFixed(1)}/5)</span>
-                            
-                            <button class="quick-bookmark-btn ${activeClass}" onclick="handleQuickBookmark(event, ${index})" aria-label="Save to watchlist">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
-                                </svg>
-                            </button>
-                        </div>
                     </div>
                 </a>
+                
+                <!-- FIXED STRUCTURE: Placed completely OUTSIDE the anchor link to prevent re-routing pages -->
+                <div class="card-footer-metrics">
+                    <span class="stars">${starText} (${ratingOutOfFive.toFixed(1)}/5)</span>
+                    
+                    <button class="quick-bookmark-btn ${activeClass}" onclick="handleQuickBookmark(event, ${index})" aria-label="Save to watchlist">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                    </button>
+                </div>
             </div>
         `;
     });

@@ -479,30 +479,42 @@ select:invalid, select option[disabled] {
 
 /* --- GRID CARD QUICK-ACTION BOOKMARKS & ALIGNMENTS --- */
 .card-footer-metrics {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: auto; /* Pushes the metric bar to the bottom of the text zone */
-    padding-top: 8px;
-    width: 100%;
+    padding: 0 18px 16px 18px; /* Perfectly matches your card-info padding */
+    background: transparent;
+    pointer-events: none; /* Prevents container box from blocking link hover zones */
+}
+
+.stars {
+    color: var(--brand-gold);
+    font-weight: 700;
+    font-size: 0.85rem;
 }
 
 .quick-bookmark-btn {
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(27, 35, 46, 0.8); /* Dark input theme backdrop blending */
+    backdrop-filter: blur(4px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    pointer-events: auto; /* Forces the button specifically to be clickable */
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .quick-bookmark-btn svg {
-    width: 13px;
-    height: 13px;
+    width: 14px;
+    height: 14px;
     fill: transparent;
     stroke: var(--text-muted);
     stroke-width: 2.5;
@@ -511,7 +523,7 @@ select:invalid, select option[disabled] {
 
 .quick-bookmark-btn:hover {
     transform: scale(1.1);
-    background: rgba(26, 33, 42, 0.6);
+    background: rgba(17, 22, 29, 0.95);
     border-color: var(--brand-gold);
 }
 
