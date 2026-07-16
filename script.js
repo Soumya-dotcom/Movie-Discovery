@@ -298,7 +298,6 @@ function renderMovieDetails() {
                     <span class="tag">${movie.genre.join(", ")}</span>
                 </div>
                 
-                // Locate this line inside the renderMovieDetails wrapper template block and replace it:
                 <p class="rating-display">★ Rating: <strong>${movie.rating.toFixed(1)} / 10</strong></p>
                 
                 <h3 style="margin-bottom:10px;">Overview</h3>
