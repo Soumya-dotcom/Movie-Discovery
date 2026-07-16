@@ -90,7 +90,7 @@ async function loadMovieCatalog(pageNumber = 1, appendData = false) {
         if(!appendData) {
             movieListContainer.innerHTML = `
                 <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--brand-red);">
-                    <h3>⚠️ Global Archive Retrieval Fault</h3>
+                    <h3>Global Archive Retrieval Fault</h3>
                     <p>Unable to connect securely to TMDB streaming endpoints. Verify your token setup.</p>
                 </div>
             `;
@@ -102,7 +102,7 @@ async function loadMovieCatalog(pageNumber = 1, appendData = false) {
 function loadNextPage() {
     var btn = document.getElementById("loadMoreBtn");
     if (btn) {
-        btn.textContent = "Loading next channel...";
+        btn.textContent = "Loading...";
         btn.style.opacity = "0.7";
         btn.disabled = true;
     }
@@ -175,7 +175,7 @@ function showMovies(movieArray) {
                 
                 <!-- FIXED STRUCTURE: Placed completely OUTSIDE the anchor link to prevent re-routing pages -->
                 <div class="card-footer-metrics">
-                    <span class="stars">${starText} (${ratingOutOfFive.toFixed(1)}/5)</span>
+                    <span class="stars">${starText} (${Math.round(ratingOutOfFive)}/5)</span>
                     
                     <button class="quick-bookmark-btn ${activeClass}" onclick="handleQuickBookmark(event, ${index})" aria-label="Save to watchlist">
                         <svg viewBox="0 0 24 24">
@@ -268,7 +268,7 @@ function renderMovieDetails() {
     if (!rawData) {
         wrapper.innerHTML = `
             <div style="text-align: center; color: var(--brand-red); padding: 40px;">
-                <h2>⚠️ Context Missing</h2>
+                <h2>Context Missing</h2>
                 <p>No movie context selected. Please return home and select a profile card.</p>
                 <a href="index.html" class="btn btn-primary" style="margin-top:20px;">Go Home</a>
             </div>
@@ -299,7 +299,8 @@ function renderMovieDetails() {
                     <span class="tag">${movie.genre.join(", ")}</span>
                 </div>
                 
-                <p class="rating-display">★ Rating: <strong>${detailsRatingOutOfFive.toFixed(1)} / 5.0</strong></p>
+                // Change this line inside the renderMovieDetails function:
+<p class="rating-display">★ Rating: <strong>${Math.round(detailsRatingOutOfFive)} / 5</strong></p>
                 
                 <h3 style="margin-bottom:10px;">Overview</h3>
                 <p class="overview-text">${movie.description}</p>
